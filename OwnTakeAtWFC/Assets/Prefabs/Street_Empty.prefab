@@ -45,10 +45,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab71cb4e26ac0d547b833e7398ced956, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allowedAbove: []
-  allowedRight: []
-  allowedBelow: []
-  allowedLeft: []
+  allowedAbove:
+  - {fileID: 82470378073823370}
+  allowedRight:
+  - {fileID: 82470378073823370}
+  allowedBelow:
+  - {fileID: 82470378073823370}
+  allowedLeft:
+  - {fileID: 82470378073823370}
 --- !u!1 &7878659774556576570
 GameObject:
   m_ObjectHideFlags: 0

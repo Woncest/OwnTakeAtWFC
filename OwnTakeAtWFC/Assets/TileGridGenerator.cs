@@ -2,16 +2,11 @@ using UnityEngine;
 
 public class TileGridGenerator : MonoBehaviour
 {
-    // Grid size
-    public int gridSize = 5;
+    public int gridSize = 5;  // Size of the grid (gridSize x gridSize)
+    public GameObject[] tilePrefabs;  // Array of tile prefabs to choose from
 
-    // Array to hold the different tile prefabs
-    public GameObject[] tilePrefabs;
+    private Cell[,] cellGrid;
 
-    // 2D array to hold references to the instantiated tiles
-    private GameObject[,] tileGrid;
-
-    // Start is called before the first frame update
     void Start()
     {
         GenerateGrid();
@@ -19,26 +14,23 @@ public class TileGridGenerator : MonoBehaviour
 
     void GenerateGrid()
     {
-        // Initialize the grid array
-        tileGrid = new GameObject[gridSize, gridSize];
+        // Initialize the cell grid
+        cellGrid = new Cell[gridSize, gridSize];
 
-        // Loop through each grid cell
+        // Iterate through each cell in the grid
         for (int y = 0; y < gridSize; y++)
         {
             for (int x = 0; x < gridSize; x++)
             {
-                // Randomly choose a tile prefab from the available options
-                GameObject tilePrefab = tilePrefabs[Random.Range(0, tilePrefabs.Length)];
+                // Create a new Cell at the current grid position
+                cellGrid[x, y] = new Cell(tilePrefabs);
 
-                // Instantiate the tile at the correct position
-                Vector3 position = new Vector3(x, 0, y); // Position on the x-z plane
-                GameObject tile = Instantiate(tilePrefab, position, Quaternion.identity);
+                // Randomly select a tile from the tilePrefabs array
+                GameObject selectedTilePrefab = tilePrefabs[Random.Range(0, tilePrefabs.Length)];
 
-                // Store the reference in the grid array
-                tileGrid[x, y] = tile;
-
-                // Optionally, you can name the tile in the hierarchy
-                tile.name = $"Tile_{x}_{y}_{tilePrefab.name}";
+                // Instantiate the selected tile at the grid position
+                Vector3 position = new Vector3(x, 0, y);
+                Instantiate(selectedTilePrefab, position, Quaternion.identity);
             }
         }
     }
