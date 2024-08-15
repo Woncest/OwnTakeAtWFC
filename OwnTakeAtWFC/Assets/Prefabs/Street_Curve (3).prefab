@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4136497756260044849
+--- !u!1 &3346895081046282725
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,9 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1992805288518222987}
-  - component: {fileID: 509091227597093389}
-  - component: {fileID: 1611576991170929824}
+  - component: {fileID: 9041825323987620636}
+  - component: {fileID: 3842053986733329392}
   m_Layer: 0
   m_Name: Street_Curve (3)
   m_TagString: Untagged
@@ -18,36 +17,86 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1992805288518222987
+--- !u!4 &9041825323987620636
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4136497756260044849}
+  m_GameObject: {fileID: 3346895081046282725}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -90, y: 0.025000006, z: 0.024999976}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3763194250460350867}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3842053986733329392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3346895081046282725}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab71cb4e26ac0d547b833e7398ced956, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  allowedAbove: []
+  allowedRight: []
+  allowedBelow: []
+  allowedLeft: []
+--- !u!1 &5178000278011906550
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3763194250460350867}
+  - component: {fileID: 2280624433327395949}
+  - component: {fileID: 5054805499985045588}
+  m_Layer: 0
+  m_Name: Street_Curve (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3763194250460350867
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5178000278011906550}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: 0.5, z: 0.5, w: -0.5}
-  m_LocalPosition: {x: 0.56587106, y: 0.0000009536743, z: -17.044418}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 100, y: 100, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 9041825323987620636}
   m_LocalEulerAnglesHint: {x: -90, y: 270, z: 0}
---- !u!33 &509091227597093389
+--- !u!33 &2280624433327395949
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4136497756260044849}
+  m_GameObject: {fileID: 5178000278011906550}
   m_Mesh: {fileID: 1489566383090635253, guid: b0331df27e5a17241953e6536ae516dc, type: 3}
---- !u!23 &1611576991170929824
+--- !u!23 &5054805499985045588
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4136497756260044849}
+  m_GameObject: {fileID: 5178000278011906550}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
