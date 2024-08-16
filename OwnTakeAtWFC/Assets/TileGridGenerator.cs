@@ -31,7 +31,41 @@ public class TileGridGenerator : MonoBehaviour
                 // Instantiate the selected tile at the grid position
                 Vector3 position = new Vector3(x, 0, y);
                 Instantiate(selectedTilePrefab, position, Quaternion.identity);
+
+                // Set the neighbors for this cell
+                SetNeighbors(x, y);
             }
+        }
+    }
+
+    void SetNeighbors(int x, int y)
+    {
+        // Check and process the above neighbor
+        if (y > 0)
+        {
+            Debug.Log($"Cell exists above at ({x}, {y - 1})");
+            // Additional logic to set the above neighbor if needed
+        }
+
+        // Check and process the right neighbor
+        if (x < gridSize - 1)
+        {
+            Debug.Log($"Cell exists to the right at ({x + 1}, {y})");
+            // Additional logic to set the right neighbor if needed
+        }
+
+        // Check and process the below neighbor
+        if (y < gridSize - 1)
+        {
+            Debug.Log($"Cell exists below at ({x}, {y + 1})");
+            // Additional logic to set the below neighbor if needed
+        }
+
+        // Check and process the left neighbor
+        if (x > 0)
+        {
+            Debug.Log($"Cell exists to the left at ({x - 1}, {y})");
+            // Additional logic to set the left neighbor if needed
         }
     }
 }

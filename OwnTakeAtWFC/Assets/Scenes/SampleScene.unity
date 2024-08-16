@@ -353,7 +353,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d5d79931ce37a141be6739066013fe7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSize: 25
+  gridSize: 3
   tilePrefabs:
   - {fileID: 340799602625160344, guid: 557a6740f8f430947b0052996ab11c09, type: 3}
   - {fileID: 8188063326001653716, guid: ecf257f603f8b6741832609437fde270, type: 3}
