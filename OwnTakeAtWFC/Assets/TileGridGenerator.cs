@@ -35,10 +35,12 @@ public class TileGridGenerator : MonoBehaviour
             for (int x = 0; x < gridSize; x++)
             {
                 // Print out the neighbors for this cell
-                SetNeighbours(x, y);
+                //SetNeighbours(x, y);
 
                 // Randomly select a tile from the remaining possible tiles
                 GameObject selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
+
+                SetNeighbours(x, y);
 
                 // Instantiate the selected tile at the grid position
                 Vector3 position = new Vector3(x, 0, y);
