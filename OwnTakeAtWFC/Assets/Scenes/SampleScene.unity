@@ -354,7 +354,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridSize: 15
-  tilePrefabs: []
+  tilePrefabs:
+  - {fileID: 1262440730204630473, guid: fb25dd18237f32f4983856009058f434, type: 3}
+  - {fileID: 6561770605665485614, guid: d1c11149de6e1914d87a34fcc9933e90, type: 3}
+  - {fileID: 6644233469823039751, guid: f47f33fa42c6a384281e1d2138b5b738, type: 3}
+  - {fileID: 3346895081046282725, guid: 53ad14296fa1ce54e8a9c51b0b4b78cf, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
