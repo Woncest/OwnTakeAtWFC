@@ -130,7 +130,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab71cb4e26ac0d547b833e7398ced956, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allowedAbove: []
-  allowedRight: []
-  allowedBelow: []
-  allowedLeft: []
+  allowedAbove:
+  - {fileID: 6644233469823039751, guid: f4411965044463649a01294eb7676057, type: 3}
+  allowedRight:
+  - {fileID: 6644233469823039751, guid: f4411965044463649a01294eb7676057, type: 3}
+  allowedBelow:
+  - {fileID: 6644233469823039751, guid: f4411965044463649a01294eb7676057, type: 3}
+  allowedLeft:
+  - {fileID: 6644233469823039751, guid: f4411965044463649a01294eb7676057, type: 3}
