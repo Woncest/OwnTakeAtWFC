@@ -51,10 +51,10 @@ public class TileGridGenerator : MonoBehaviour
     {
         // Define directions and corresponding allowed tile lists
         (int xOffset, int yOffset, System.Func<Tile, List<GameObject>> getAllowedTiles, string direction)[] directions = {
-            (0, 1, tile => tile.allowedLeft, "above"),
-            (1, 0, tile => tile.allowedAbove, "right"),
-            (0, -1, tile => tile.allowedRight, "below"),
-            (-1, 0, tile => tile.allowedBelow, "left")
+            (-1, 0, tile => tile.allowedAbove, "above"),
+            (0, 1, tile => tile.allowedRight, "right"),
+            (1, 0, tile => tile.allowedBelow, "below"),
+            (0, -1, tile => tile.allowedLeft, "left")
         };
 
         foreach (var dir in directions)
