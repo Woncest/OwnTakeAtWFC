@@ -1,12 +1,13 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Cell
 {
-    public GameObject[] possibleTiles;
+    public List<GameObject> possibleTiles;  // Replaced array with List<GameObject>
 
-    public Cell(GameObject[] tilePrefabs)
+    public Cell(List<GameObject> tilePrefabs)
     {
-        // Initialize with all possible tiles (for future use)
-        possibleTiles = tilePrefabs;
+        // Initialize with all possible tiles
+        possibleTiles = new List<GameObject>(tilePrefabs);
     }
 }
