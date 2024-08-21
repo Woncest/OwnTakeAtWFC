@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -9,12 +10,20 @@ public class TileGridGenerator : MonoBehaviour
 
     private Cell[,] cellGrid;
 
+    public bool isKeyPressed = false;
+
     void Start()
     {
-        GenerateGrid();
+        StartCoroutine(GenerateGrid());
     }
 
-    void GenerateGrid()
+    void Update(){
+        /*if(Input.GetKeyDown(KeyCode.Space)){
+            isKeyPressed = true;
+        }*/
+    }
+
+    IEnumerator GenerateGrid()
     {
         // Initialize the cell grid
         cellGrid = new Cell[gridSize, gridSize];
@@ -37,6 +46,17 @@ public class TileGridGenerator : MonoBehaviour
                 // Print out the neighbors for this cell
                 //SetNeighbours(x, y);
 
+                while (!isKeyPressed)
+                {
+                    if (Input.GetKeyDown(KeyCode.Space))
+                    {
+                        isKeyPressed = true;
+                    }
+
+                    // Make sure to yield control so that Unity doesn't freeze
+                    yield return null;
+                }
+
                 // Randomly select a tile from the remaining possible tiles
                 GameObject selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
 
@@ -45,6 +65,7 @@ public class TileGridGenerator : MonoBehaviour
                 // Instantiate the selected tile at the grid position
                 Vector3 position = new Vector3(x, 0, y);
                 Instantiate(selectedTilePrefab, position, Quaternion.identity);
+                isKeyPressed = false;
             }
         }
     }
