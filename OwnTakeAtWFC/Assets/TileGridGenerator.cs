@@ -10,20 +10,22 @@ public class TileGridGenerator : MonoBehaviour
 
     private Cell[,] cellGrid;
 
-    public bool isKeyPressed = false;
-
     void Start()
     {
-        StartCoroutine(GenerateGrid());
+        InitializeCellGrid();
+        GenerateGrid();
     }
 
-    void Update(){
-        /*if(Input.GetKeyDown(KeyCode.Space)){
-            isKeyPressed = true;
-        }*/
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            ClearGrid();
+            GenerateGrid();
+        }
     }
 
-    IEnumerator GenerateGrid()
+    void InitializeCellGrid()
     {
         // Initialize the cell grid
         cellGrid = new Cell[gridSize, gridSize];
@@ -37,154 +39,90 @@ public class TileGridGenerator : MonoBehaviour
                 cellGrid[x, y] = new Cell(tilePrefabs);
             }
         }
+    }
 
+    void GenerateGrid()
+    {
         // Now, iterate through each cell to print neighbors and randomly select a tile
         for (int y = 0; y < gridSize; y++)
         {
             for (int x = 0; x < gridSize; x++)
             {
-                // Print out the neighbors for this cell
-                //SetNeighbours(x, y);
-
-                while (!isKeyPressed)
-                {
-                    if (Input.GetKeyDown(KeyCode.Space))
-                    {
-                        isKeyPressed = true;
-                    }
-
-                    // Make sure to yield control so that Unity doesn't freeze
-                    yield return null;
-                }
-
                 // Randomly select a tile from the remaining possible tiles
                 GameObject selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
+                // Remove all other tiles from the list except the selected one
+                cellGrid[x, y].possibleTiles.RemoveAll(tile => tile != selectedTilePrefab);
+                // Set the selected tile on the cell
+                cellGrid[x, y].SetTile(selectedTilePrefab);
 
                 SetNeighbours(x, y);
 
                 // Instantiate the selected tile at the grid position
                 Vector3 position = new Vector3(x, 0, y);
-                Instantiate(selectedTilePrefab, position, Quaternion.identity);
-                isKeyPressed = false;
+                cellGrid[x, y].instantiatedTile = Instantiate(selectedTilePrefab, position, Quaternion.identity);
+            }
+        }
+    }
+
+    void ClearGrid()
+    {
+        // Destroy all instantiated tiles and clear cell grid data
+        for (int y = 0; y < gridSize; y++)
+        {
+            for (int x = 0; x < gridSize; x++)
+            {
+                // Destroy the instantiated tile if it exists
+                if (cellGrid[x, y].instantiatedTile != null)
+                {
+                    Destroy(cellGrid[x, y].instantiatedTile);
+                }
+
+                // Reinitialize the cell's possible tiles
+                cellGrid[x, y].possibleTiles = new List<GameObject>(tilePrefabs);
+                cellGrid[x, y].instantiatedTile = null;  // Clear reference to the instantiated tile
             }
         }
     }
 
     void SetNeighbours(int x, int y)
     {
-        // Check and process the above neighbor
-        if (y > 0)
+        // Define directions and corresponding allowed tile lists
+        (int xOffset, int yOffset, System.Func<Tile, List<GameObject>> getAllowedTiles, string direction)[] directions = {
+            (-1, 0, tile => tile.allowedAbove, "above"),
+            (0, 1, tile => tile.allowedRight, "right"),
+            (1, 0, tile => tile.allowedBelow, "below"),
+            (0, -1, tile => tile.allowedLeft, "left")
+        };
+
+        foreach (var dir in directions)
         {
-            //Go through all cellGrid[x,y - 1].possibleTiles and compare to cellGrid[x,y] and only keep what is allowed above
-            List<GameObject> allowedTiles = cellGrid[x, y].possibleTiles.First().GetComponent<Tile>().allowedAbove;
+            int neighborX = x + dir.xOffset;
+            int neighborY = y + dir.yOffset;
 
-            // Create a temporary list to store the tiles that need to be removed
-            List<GameObject> tilesToRemove = new List<GameObject>();
-
-            // Iterate over the possible tiles in the cell above
-            for (int i = 0; i < cellGrid[x, y - 1].possibleTiles.Count; i++)
+            // Check if the neighbor is within bounds
+            if (neighborX >= 0 && neighborX < gridSize && neighborY >= 0 && neighborY < gridSize)
             {
-                GameObject tile = cellGrid[x, y - 1].possibleTiles[i];
+                // Get the allowed tiles for the current direction from the current cell
+                Tile currentTile = cellGrid[x, y].possibleTiles.First().GetComponent<Tile>();
+                List<GameObject> allowedTiles = dir.getAllowedTiles(currentTile);
+                
+                List<GameObject> tilesToRemove = new List<GameObject>();
 
-                // If the tile is not allowed, add it to the list of tiles to remove
-                if (!allowedTiles.Contains(tile))
+                // Iterate over the possible tiles in the neighboring cell
+                foreach (GameObject tile in cellGrid[neighborX, neighborY].possibleTiles)
                 {
-                    tilesToRemove.Add(tile);
+                    // If the tile is not allowed, mark it for removal
+                    if (!allowedTiles.Contains(tile))
+                    {
+                        tilesToRemove.Add(tile);
+                    }
                 }
-            }
 
-            // Remove the marked tiles from the original list after the loop completes
-            Debug.Log("Removed " + tilesToRemove.Count + " Tiles Up");
-            foreach (GameObject tileToRemove in tilesToRemove)
-            {
-                cellGrid[x, y - 1].possibleTiles.Remove(tileToRemove);
-            }
-        }
-
-        // Check and process the right neighbor
-        if (x < gridSize - 1)
-        {
-            //Go through all cellGrid[x,y - 1].possibleTiles and compare to cellGrid[x,y] and only keep what is allowed above
-            List<GameObject> allowedTiles = cellGrid[x, y].possibleTiles.First().GetComponent<Tile>().allowedRight;
-
-            // Create a temporary list to store the tiles that need to be removed
-            List<GameObject> tilesToRemove = new List<GameObject>();
-
-            // Iterate over the possible tiles in the cell above
-            for (int i = 0; i < cellGrid[x + 1, y].possibleTiles.Count; i++)
-            {
-                GameObject tile = cellGrid[x + 1,y].possibleTiles[i];
-
-                // If the tile is not allowed, add it to the list of tiles to remove
-                if (!allowedTiles.Contains(tile))
+                // Remove the marked tiles from the neighboring cell
+                foreach (GameObject tileToRemove in tilesToRemove)
                 {
-                    tilesToRemove.Add(tile);
+                    cellGrid[neighborX, neighborY].possibleTiles.Remove(tileToRemove);
                 }
-            }
-
-            // Remove the marked tiles from the original list after the loop completes
-            Debug.Log("Removed " + tilesToRemove.Count + " Tiles Right");
-            foreach (GameObject tileToRemove in tilesToRemove)
-            {
-                cellGrid[x + 1, y].possibleTiles.Remove(tileToRemove);
-            }
-        }
-
-        // Check and process the below neighbor
-        if (y < gridSize - 1)
-        {
-            //Go through all cellGrid[x,y - 1].possibleTiles and compare to cellGrid[x,y] and only keep what is allowed above
-            List<GameObject> allowedTiles = cellGrid[x, y].possibleTiles.First().GetComponent<Tile>().allowedBelow;
-
-            // Create a temporary list to store the tiles that need to be removed
-            List<GameObject> tilesToRemove = new List<GameObject>();
-
-            // Iterate over the possible tiles in the cell above
-            for (int i = 0; i < cellGrid[x, y + 1].possibleTiles.Count; i++)
-            {
-                GameObject tile = cellGrid[x, y + 1].possibleTiles[i];
-
-                // If the tile is not allowed, add it to the list of tiles to remove
-                if (!allowedTiles.Contains(tile))
-                {
-                    tilesToRemove.Add(tile);
-                }
-            }
-
-            // Remove the marked tiles from the original list after the loop completes
-            Debug.Log("Removed " + tilesToRemove.Count + " Tiles Below");
-            foreach (GameObject tileToRemove in tilesToRemove)
-            {
-                cellGrid[x, y + 1].possibleTiles.Remove(tileToRemove);
-            }
-        }
-
-        // Check and process the left neighbor
-        if (x > 0)
-        {
-            //Go through all cellGrid[x,y - 1].possibleTiles and compare to cellGrid[x,y] and only keep what is allowed above
-            List<GameObject> allowedTiles = cellGrid[x, y].possibleTiles.First().GetComponent<Tile>().allowedLeft;
-
-            // Create a temporary list to store the tiles that need to be removed
-            List<GameObject> tilesToRemove = new List<GameObject>();
-
-            // Iterate over the possible tiles in the cell above
-            for (int i = 0; i < cellGrid[x - 1, y].possibleTiles.Count; i++)
-            {
-                GameObject tile = cellGrid[x - 1, y].possibleTiles[i];
-
-                // If the tile is not allowed, add it to the list of tiles to remove
-                if (!allowedTiles.Contains(tile))
-                {
-                    tilesToRemove.Add(tile);
-                }
-            }
-
-            // Remove the marked tiles from the original list after the loop completes
-            Debug.Log("Removed " + tilesToRemove.Count + " Tiles Left");
-            foreach (GameObject tileToRemove in tilesToRemove)
-            {
-                cellGrid[x - 1, y].possibleTiles.Remove(tileToRemove);
             }
         }
     }

@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: -5064951484525543592}
   m_Layer: 0
   m_Name: Street_3Way_2 (2)
-  m_TagString: Untagged
+  m_TagString: Street_3Way_2 (2)
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

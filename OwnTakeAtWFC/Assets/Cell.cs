@@ -3,11 +3,17 @@ using UnityEngine;
 
 public class Cell
 {
-    public List<GameObject> possibleTiles;  // Replaced array with List<GameObject>
+    public List<GameObject> possibleTiles;
+    public GameObject instantiatedTile;
 
-    public Cell(List<GameObject> tilePrefabs)
+    public Cell(List<GameObject> tiles)
     {
-        // Initialize with all possible tiles
-        possibleTiles = new List<GameObject>(tilePrefabs);
+        possibleTiles = new List<GameObject>(tiles);
+        instantiatedTile = null;
+    }
+
+    public void SetTile(GameObject tile)
+    {
+        instantiatedTile = tile;
     }
 }
