@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 7763832659998823297}
   m_Layer: 0
   m_Name: Street_Curve (1)
-  m_TagString: Street_Curve (1)
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
