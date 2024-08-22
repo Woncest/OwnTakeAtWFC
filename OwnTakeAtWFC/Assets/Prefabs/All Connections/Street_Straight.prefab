@@ -45,10 +45,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab71cb4e26ac0d547b833e7398ced956, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allowedAbove: []
-  allowedRight: []
-  allowedBelow: []
-  allowedLeft: []
+  allowedAbove:
+  - {fileID: 8188063326001653716}
+  - {fileID: 2574514325355114568, guid: 74d853fb63a2e444c906261d40210428, type: 3}
+  allowedRight:
+  - {fileID: 8188063326001653716}
+  allowedBelow:
+  - {fileID: 8188063326001653716}
+  - {fileID: 2574514325355114568, guid: 74d853fb63a2e444c906261d40210428, type: 3}
+  allowedLeft:
+  - {fileID: 8188063326001653716}
 --- !u!1 &8718527185693455172
 GameObject:
   m_ObjectHideFlags: 0
