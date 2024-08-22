@@ -84,6 +84,7 @@ public class TileGridGenerator : MonoBehaviour
         }
     }
 
+    //ONLY NEIGHBOURS ARE BEING MODIFIED
     void SetNeighbours(int x, int y)
     {
         // Define directions and corresponding allowed tile lists
@@ -94,36 +95,107 @@ public class TileGridGenerator : MonoBehaviour
             (0, -1, tile => tile.allowedLeft, "left")
         };
 
-        foreach (var dir in directions)
+        // Ensure that the tile in the current cell is set
+        if (cellGrid[x, y].IsTileSet())
         {
-            int neighborX = x + dir.xOffset;
-            int neighborY = y + dir.yOffset;
+            Tile currentTile = cellGrid[x, y].instantiatedTile.GetComponent<Tile>();
 
-            // Check if the neighbor is within bounds
-            if (neighborX >= 0 && neighborX < gridSize && neighborY >= 0 && neighborY < gridSize)
+            // Check each direction for neighboring tiles
+            foreach (var dir in directions)
             {
-                // Get the allowed tiles for the current direction from the current cell
-                Tile currentTile = cellGrid[x, y].possibleTiles.First().GetComponent<Tile>();
-                List<GameObject> allowedTiles = dir.getAllowedTiles(currentTile);
-                
-                List<GameObject> tilesToRemove = new List<GameObject>();
+                int neighborX = x + dir.xOffset;
+                int neighborY = y + dir.yOffset;
 
-                // Iterate over the possible tiles in the neighboring cell
-                foreach (GameObject tile in cellGrid[neighborX, neighborY].possibleTiles)
+                // Check if the neighbor is within bounds
+                if (neighborX >= 0 && neighborX < gridSize && neighborY >= 0 && neighborY < gridSize)
                 {
-                    // If the tile is not allowed, mark it for removal
-                    if (!allowedTiles.Contains(tile))
+                    // Get the allowed tiles for the current direction based on the current cell's tile
+                    List<GameObject> allowedTiles = dir.getAllowedTiles(currentTile);
+
+                    // Proceed only if the neighboring cell hasn't set a tile yet
+                    if (!cellGrid[neighborX, neighborY].IsTileSet())
                     {
-                        tilesToRemove.Add(tile);
-                    }
-                }
+                        List<GameObject> tilesToRemove = new List<GameObject>();
 
-                // Remove the marked tiles from the neighboring cell
-                foreach (GameObject tileToRemove in tilesToRemove)
-                {
-                    cellGrid[neighborX, neighborY].possibleTiles.Remove(tileToRemove);
+                        // Iterate over the possible tiles in the neighboring cell
+                        foreach (GameObject tile in cellGrid[neighborX, neighborY].possibleTiles)
+                        {
+                            // If the tile is not allowed, mark it for removal
+                            if (!allowedTiles.Contains(tile))
+                            {
+                                tilesToRemove.Add(tile);
+                            }
+                        }
+
+                        // Remove the marked tiles from the neighboring cell
+                        foreach (GameObject tileToRemove in tilesToRemove)
+                        {
+                            cellGrid[neighborX, neighborY].possibleTiles.Remove(tileToRemove);
+                        }
+                    }
                 }
             }
         }
     }
+
+    //RECURSIVE UNTIL NO CHANGES
+    /*void SetNeighbours(int x, int y)
+    {
+        // Define directions and corresponding allowed tile lists
+        (int xOffset, int yOffset, System.Func<Tile, List<GameObject>> getAllowedTiles, string direction)[] directions = {
+            (-1, 0, tile => tile.allowedAbove, "above"),
+            (0, 1, tile => tile.allowedRight, "right"),
+            (1, 0, tile => tile.allowedBelow, "below"),
+            (0, -1, tile => tile.allowedLeft, "left")
+        };
+
+        // Ensure that the tile in the current cell is set
+        if (cellGrid[x, y].IsTileSet())
+        {
+            Tile currentTile = cellGrid[x, y].instantiatedTile.GetComponent<Tile>();
+
+            // Loop through each direction (above, below, left, right)
+            foreach (var dir in directions)
+            {
+                int neighborX = x + dir.xOffset;
+                int neighborY = y + dir.yOffset;
+
+                // Check if the neighbor is within bounds
+                if (neighborX >= 0 && neighborX < gridSize && neighborY >= 0 && neighborY < gridSize)
+                {
+                    // Only proceed if the neighboring cell doesn't have a tile set yet
+                    if (!cellGrid[neighborX, neighborY].IsTileSet())
+                    {
+                        List<GameObject> allowedTiles = dir.getAllowedTiles(currentTile);
+                        List<GameObject> tilesToRemove = new List<GameObject>();
+                        bool tileChanged = false;
+
+                        // Iterate over the possible tiles in the neighboring cell
+                        foreach (GameObject tile in cellGrid[neighborX, neighborY].possibleTiles)
+                        {
+                            // If the tile is not allowed, mark it for removal
+                            if (!allowedTiles.Contains(tile))
+                            {
+                                tilesToRemove.Add(tile);
+                            }
+                        }
+
+                        // Remove the marked tiles from the neighboring cell
+                        foreach (GameObject tileToRemove in tilesToRemove)
+                        {
+                            cellGrid[neighborX, neighborY].possibleTiles.Remove(tileToRemove);
+                            tileChanged = true;  // Mark that a change occurred
+                        }
+
+                        // If any changes were made, recursively update the neighbors of the neighbor
+                        if (tileChanged)
+                        {
+                            SetNeighbours(neighborX, neighborY);
+                        }
+                    }
+                }
+            }
+        }
+    }*/
+
 }
