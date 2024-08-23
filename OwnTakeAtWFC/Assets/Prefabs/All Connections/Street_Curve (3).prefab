@@ -45,10 +45,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab71cb4e26ac0d547b833e7398ced956, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allowedAbove: []
-  allowedRight: []
-  allowedBelow: []
-  allowedLeft: []
+  allowedAbove:
+  - {fileID: 3266129857468719318, guid: 6a714b141a2796b4cabb18dc6424e9c7, type: 3}
+  - {fileID: 6561770605665485614, guid: d1c11149de6e1914d87a34fcc9933e90, type: 3}
+  - {fileID: 6644233469823039751, guid: f47f33fa42c6a384281e1d2138b5b738, type: 3}
+  - {fileID: 82470378073823370, guid: 09f564edae6caf94ba17de2a6ce7f145, type: 3}
+  - {fileID: 340799602625160344, guid: 093c702edafea0545ae2b3d516282995, type: 3}
+  allowedRight:
+  - {fileID: 3266129857468719318, guid: 6a714b141a2796b4cabb18dc6424e9c7, type: 3}
+  - {fileID: 4372513598314448873, guid: 2ed4b5f39d95caa4da97cdc32f561e2e, type: 3}
+  - {fileID: 9090500349708039326, guid: fe4a17d1a18897746885ef786cb96647, type: 3}
+  - {fileID: 2574514325355114568, guid: 74d853fb63a2e444c906261d40210428, type: 3}
+  - {fileID: 1262440730204630473, guid: fb25dd18237f32f4983856009058f434, type: 3}
+  - {fileID: 6561770605665485614, guid: d1c11149de6e1914d87a34fcc9933e90, type: 3}
+  - {fileID: 340799602625160344, guid: 093c702edafea0545ae2b3d516282995, type: 3}
+  allowedBelow:
+  - {fileID: 3266129857468719318, guid: 6a714b141a2796b4cabb18dc6424e9c7, type: 3}
+  - {fileID: 8516727776871553884, guid: 827fbb3cbf152b94e93d80dcef13888e, type: 3}
+  - {fileID: 9090500349708039326, guid: fe4a17d1a18897746885ef786cb96647, type: 3}
+  - {fileID: 2574514325355114568, guid: 74d853fb63a2e444c906261d40210428, type: 3}
+  - {fileID: 6561770605665485614, guid: d1c11149de6e1914d87a34fcc9933e90, type: 3}
+  - {fileID: 6644233469823039751, guid: f47f33fa42c6a384281e1d2138b5b738, type: 3}
+  - {fileID: 8188063326001653716, guid: 9b0498fa8d7da4f4b8ffd3c9ae227c3d, type: 3}
+  allowedLeft:
+  - {fileID: 9090500349708039326, guid: fe4a17d1a18897746885ef786cb96647, type: 3}
+  - {fileID: 1262440730204630473, guid: fb25dd18237f32f4983856009058f434, type: 3}
+  - {fileID: 6561770605665485614, guid: d1c11149de6e1914d87a34fcc9933e90, type: 3}
+  - {fileID: 82470378073823370, guid: 09f564edae6caf94ba17de2a6ce7f145, type: 3}
+  - {fileID: 8188063326001653716, guid: 9b0498fa8d7da4f4b8ffd3c9ae227c3d, type: 3}
 --- !u!1 &5178000278011906550
 GameObject:
   m_ObjectHideFlags: 0
