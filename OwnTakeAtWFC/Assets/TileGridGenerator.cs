@@ -55,7 +55,8 @@ public class TileGridGenerator : MonoBehaviour
                 // Set the selected tile on the cell
                 cellGrid[x, y].SetTile(selectedTilePrefab);
 
-                SetNeighbours(x, y);
+                SetNeighboursOnlyNeighbours(x, y);
+                //SetNeighboursRecursive(x,y);
 
                 // Instantiate the selected tile at the grid position
                 Vector3 position = new Vector3(x, 0, y);
@@ -85,7 +86,7 @@ public class TileGridGenerator : MonoBehaviour
     }
 
     //ONLY NEIGHBOURS ARE BEING MODIFIED
-    void SetNeighbours(int x, int y)
+    void SetNeighboursOnlyNeighbours(int x, int y)
     {
         // Define directions and corresponding allowed tile lists
         (int xOffset, int yOffset, System.Func<Tile, List<GameObject>> getAllowedTiles, string direction)[] directions = {
@@ -138,15 +139,15 @@ public class TileGridGenerator : MonoBehaviour
         }
     }
 
-    //RECURSIVE UNTIL NO CHANGES
-    /*void SetNeighbours(int x, int y)
+    //RECURSIVE UNTIL NO CHANGES PERHAPS FAULTY
+    void SetNeighboursRecursive(int x, int y)
     {
         // Define directions and corresponding allowed tile lists
         (int xOffset, int yOffset, System.Func<Tile, List<GameObject>> getAllowedTiles, string direction)[] directions = {
-            (-1, 0, tile => tile.allowedAbove, "above"),
-            (0, 1, tile => tile.allowedRight, "right"),
-            (1, 0, tile => tile.allowedBelow, "below"),
-            (0, -1, tile => tile.allowedLeft, "left")
+            (-1, 0, tile => tile.allowedBelow, "below"),
+            (0, 1, tile => tile.allowedLeft, "left"),
+            (1, 0, tile => tile.allowedAbove, "above"),
+            (0, -1, tile => tile.allowedRight, "right")
         };
 
         // Ensure that the tile in the current cell is set
@@ -190,12 +191,12 @@ public class TileGridGenerator : MonoBehaviour
                         // If any changes were made, recursively update the neighbors of the neighbor
                         if (tileChanged)
                         {
-                            SetNeighbours(neighborX, neighborY);
+                            SetNeighboursRecursive(neighborX, neighborY);
                         }
                     }
                 }
             }
         }
-    }*/
+    }
 
 }
