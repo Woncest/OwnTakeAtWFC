@@ -155,7 +155,7 @@ public class TileGridGenerator : MonoBehaviour
         }
     }
 
-    //RECURSIVE UNTIL NO CHANGES PERHAPS FAULTY
+    //RECURSIVE PERHAPS FAULTY
     void SetNeighboursRecursive(int x, int y)
     {
         // Define directions and corresponding allowed tile lists
@@ -183,15 +183,26 @@ public class TileGridGenerator : MonoBehaviour
                     // Only proceed if the neighboring cell doesn't have a tile set yet
                     if (!cellGrid[neighborX, neighborY].IsTileSet())
                     {
-                        List<GameObject> allowedTiles = dir.getAllowedTiles(currentTile);
+                        // Generate the list of all allowed tiles based on the possible tiles in the current cell
+                        List<GameObject> allAllowedTiles = new List<GameObject>();
+                        foreach (GameObject possibleTile in cellGrid[x, y].possibleTiles)
+                        {
+                            Tile tileComponent = possibleTile.GetComponent<Tile>();
+                            List<GameObject> allowedTiles = dir.getAllowedTiles(tileComponent);
+                            allAllowedTiles.AddRange(allowedTiles);
+                        }
+
+                        // Remove duplicates from the allowed tiles list
+                        allAllowedTiles = new List<GameObject>(new HashSet<GameObject>(allAllowedTiles));
+
                         List<GameObject> tilesToRemove = new List<GameObject>();
                         bool tileChanged = false;
 
                         // Iterate over the possible tiles in the neighboring cell
                         foreach (GameObject tile in cellGrid[neighborX, neighborY].possibleTiles)
                         {
-                            // If the tile is not allowed, mark it for removal
-                            if (!allowedTiles.Contains(tile))
+                            // If the tile is not in the allowed tiles list, mark it for removal
+                            if (!allAllowedTiles.Contains(tile))
                             {
                                 tilesToRemove.Add(tile);
                             }
