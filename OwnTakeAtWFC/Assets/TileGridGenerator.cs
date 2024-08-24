@@ -51,7 +51,7 @@ public class TileGridGenerator : MonoBehaviour
                 // Check if there are any possible tiles left
                 if (cellGrid[x, y].possibleTiles.Count == 0)
                 {
-                    Debug.LogError($"No possible tiles left for cell ({x}, {y}).");
+                    //Debug.LogError($"No possible tiles left for cell ({x}, {y}).");
                     continue;
                 }
 
