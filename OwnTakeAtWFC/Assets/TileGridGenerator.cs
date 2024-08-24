@@ -43,20 +43,35 @@ public class TileGridGenerator : MonoBehaviour
 
     void GenerateGrid()
     {
-        // Now, iterate through each cell to print neighbors and randomly select a tile
+        // Iterate through each cell to print neighbors and randomly select a tile
         for (int y = 0; y < gridSize; y++)
         {
             for (int x = 0; x < gridSize; x++)
             {
+                // Check if there are any possible tiles left
+                if (cellGrid[x, y].possibleTiles.Count == 0)
+                {
+                    Debug.LogError($"No possible tiles left for cell ({x}, {y}).");
+                    continue;
+                }
+
                 // Randomly select a tile from the remaining possible tiles
                 GameObject selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
-                // Remove all other tiles from the list except the selected one
+
+                // Add all current possible tiles to the notChosenTiles list
+                cellGrid[x, y].notChosenTiles = new List<GameObject>(cellGrid[x, y].possibleTiles);
+
+                // Remove the selected tile from notChosenTiles list
+                cellGrid[x, y].notChosenTiles.Remove(selectedTilePrefab);
+
+                // Remove the selected tile from the possibleTiles list
                 cellGrid[x, y].possibleTiles.RemoveAll(tile => tile != selectedTilePrefab);
+
                 // Set the selected tile on the cell
                 cellGrid[x, y].SetTile(selectedTilePrefab);
 
+                // Proceed with setting neighbors and instantiating the tile
                 SetNeighboursOnlyNeighbours(x, y);
-                //SetNeighboursRecursive(x,y);
 
                 // Instantiate the selected tile at the grid position
                 Vector3 position = new Vector3(x, 0, y);
@@ -64,6 +79,7 @@ public class TileGridGenerator : MonoBehaviour
             }
         }
     }
+
 
     void ClearGrid()
     {
@@ -197,6 +213,66 @@ public class TileGridGenerator : MonoBehaviour
                 }
             }
         }
+    }
+
+    void SetNeighboursHorizontally(int x, int y)
+    {
+        // Define directions and corresponding allowed tile lists
+        (int xOffset, int yOffset, System.Func<Tile, List<GameObject>> getAllowedTiles, string direction)[] directions = {
+            (-1, 0, tile => tile.allowedBelow, "below"),  // Above Neighbor
+            (1, 0, tile => tile.allowedAbove, "above"),  // Below Neighbor
+            (0, -1, tile => tile.allowedRight, "right"),  // Left Neighbor
+            (0, 1, tile => tile.allowedLeft, "left")  // Right Neighbor
+        };
+
+        // Ensure that the tile in the current cell is set
+        if (cellGrid[x, y].IsTileSet())
+        {
+            Tile currentTile = cellGrid[x, y].instantiatedTile.GetComponent<Tile>();
+
+            foreach (var dir in directions)
+            {
+                int neighborX = x + dir.xOffset;
+                int neighborY = y + dir.yOffset;
+
+                // Check if the neighbor is within bounds
+                if (neighborX >= 0 && neighborX < gridSize && neighborY >= 0 && neighborY < gridSize)
+                {
+                    // Proceed only if the neighboring cell hasn't set a tile yet
+                    if (!cellGrid[neighborX, neighborY].IsTileSet())
+                    {
+                        List<GameObject> allowedTiles = dir.getAllowedTiles(currentTile);
+                        List<GameObject> tilesToRemove = new List<GameObject>();
+
+                        // Iterate over the possible tiles in the neighboring cell
+                        foreach (GameObject tile in cellGrid[neighborX, neighborY].possibleTiles)
+                        {
+                            // If the tile is not allowed, mark it for removal
+                            if (!allowedTiles.Contains(tile))
+                            {
+                                tilesToRemove.Add(tile);
+                            }
+                        }
+
+                        // Remove the marked tiles from the neighboring cell
+                        foreach (GameObject tileToRemove in tilesToRemove)
+                        {
+                            cellGrid[neighborX, neighborY].possibleTiles.Remove(tileToRemove);
+                        }
+
+                        // Recursively propagate the constraints horizontally or vertically
+                        PropagateHorizontalOrVerticalConstraints(neighborX, neighborY);
+                    }
+                }
+            }
+        }
+    }
+
+    // Helper method to propagate horizontal/vertical constraints on neighbors
+    void PropagateHorizontalOrVerticalConstraints(int x, int y)
+    {
+        // Check horizontal neighbors (left and right) and propagate
+        SetNeighboursOnlyNeighbours(x, y);  // Make sure to limit it to just the direct neighbors
     }
 
 }
