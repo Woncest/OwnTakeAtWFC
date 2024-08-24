@@ -71,7 +71,7 @@ public class TileGridGenerator : MonoBehaviour
                 cellGrid[x, y].SetTile(selectedTilePrefab);
 
                 // Proceed with setting neighbors and instantiating the tile
-                SetNeighboursOnlyNeighbours(x, y);
+                SetNeighboursHorizontally(x, y);
 
                 // Instantiate the selected tile at the grid position
                 Vector3 position = new Vector3(x, 0, y);
@@ -112,11 +112,9 @@ public class TileGridGenerator : MonoBehaviour
             (0, -1, tile => tile.allowedRight, "right")
         };
 
-        // Ensure that the tile in the current cell is set
-        if (cellGrid[x, y].IsTileSet())
+        // Ensure that the current cell has possible tiles
+        if (cellGrid[x, y].possibleTiles.Count > 0)
         {
-            Tile currentTile = cellGrid[x, y].instantiatedTile.GetComponent<Tile>();
-
             // Check each direction for neighboring tiles
             foreach (var dir in directions)
             {
@@ -126,8 +124,18 @@ public class TileGridGenerator : MonoBehaviour
                 // Check if the neighbor is within bounds
                 if (neighborX >= 0 && neighborX < gridSize && neighborY >= 0 && neighborY < gridSize)
                 {
-                    // Get the allowed tiles for the current direction based on the current cell's tile
-                    List<GameObject> allowedTiles = dir.getAllowedTiles(currentTile);
+                    // Create a combined allowed tiles list for the current direction
+                    List<GameObject> combinedAllowedTiles = new List<GameObject>();
+
+                    // Gather allowed tiles from all possible tiles in the current cell
+                    foreach (GameObject possibleTile in cellGrid[x, y].possibleTiles)
+                    {
+                        Tile tileComponent = possibleTile.GetComponent<Tile>();
+                        combinedAllowedTiles.AddRange(dir.getAllowedTiles(tileComponent));
+                    }
+
+                    // Remove duplicates from combinedAllowedTiles (optional but recommended)
+                    combinedAllowedTiles = new List<GameObject>(new HashSet<GameObject>(combinedAllowedTiles));
 
                     // Proceed only if the neighboring cell hasn't set a tile yet
                     if (!cellGrid[neighborX, neighborY].IsTileSet())
@@ -137,8 +145,8 @@ public class TileGridGenerator : MonoBehaviour
                         // Iterate over the possible tiles in the neighboring cell
                         foreach (GameObject tile in cellGrid[neighborX, neighborY].possibleTiles)
                         {
-                            // If the tile is not allowed, mark it for removal
-                            if (!allowedTiles.Contains(tile))
+                            // If the tile is not in the combined allowed list, mark it for removal
+                            if (!combinedAllowedTiles.Contains(tile))
                             {
                                 tilesToRemove.Add(tile);
                             }
@@ -236,11 +244,10 @@ public class TileGridGenerator : MonoBehaviour
             (0, 1, tile => tile.allowedLeft, "left")  // Right Neighbor
         };
 
-        // Ensure that the tile in the current cell is set
-        if (cellGrid[x, y].IsTileSet())
+        // Ensure that there are possible tiles in the current cell
+        if (cellGrid[x, y].possibleTiles.Count > 0)
         {
-            Tile currentTile = cellGrid[x, y].instantiatedTile.GetComponent<Tile>();
-
+            // Loop through each direction (above, below, left, right)
             foreach (var dir in directions)
             {
                 int neighborX = x + dir.xOffset;
@@ -252,14 +259,29 @@ public class TileGridGenerator : MonoBehaviour
                     // Proceed only if the neighboring cell hasn't set a tile yet
                     if (!cellGrid[neighborX, neighborY].IsTileSet())
                     {
-                        List<GameObject> allowedTiles = dir.getAllowedTiles(currentTile);
+                        // Create a list to store the allowed tiles from all possible tiles in the current cell
+                        List<GameObject> combinedAllowedTiles = new List<GameObject>();
+
+                        // Iterate over the possible tiles in the current cell
+                        foreach (GameObject possibleTile in cellGrid[x, y].possibleTiles)
+                        {
+                            Tile tileComponent = possibleTile.GetComponent<Tile>();
+                            List<GameObject> allowedTiles = dir.getAllowedTiles(tileComponent);
+
+                            // Add allowed tiles from this possible tile to the combined list
+                            combinedAllowedTiles.AddRange(allowedTiles);
+                        }
+
+                        // Remove duplicates from combinedAllowedTiles
+                        combinedAllowedTiles = new List<GameObject>(new HashSet<GameObject>(combinedAllowedTiles));
+
                         List<GameObject> tilesToRemove = new List<GameObject>();
 
                         // Iterate over the possible tiles in the neighboring cell
                         foreach (GameObject tile in cellGrid[neighborX, neighborY].possibleTiles)
                         {
-                            // If the tile is not allowed, mark it for removal
-                            if (!allowedTiles.Contains(tile))
+                            // If the tile is not in the combined allowed tiles list, mark it for removal
+                            if (!combinedAllowedTiles.Contains(tile))
                             {
                                 tilesToRemove.Add(tile);
                             }
