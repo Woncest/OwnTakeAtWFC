@@ -296,6 +296,13 @@ public class TileGridGenerator : MonoBehaviour
                         // Recursively propagate the constraints horizontally or vertically
                         PropagateHorizontalOrVerticalConstraints(neighborX, neighborY);
                     }
+                    if(neighborX != x){
+                        if(y + 1< gridSize) SetNeighboursOnlyNeighbours(neighborX, y + 1);
+                        if(y - 1>= 0) SetNeighboursOnlyNeighbours(neighborX, y - 1);
+                    }else{
+                        if(x + 1 < gridSize) SetNeighboursOnlyNeighbours(x + 1, neighborY);
+                        if(x - 1>= 0) SetNeighboursOnlyNeighbours(x - 1, neighborY);
+                    }
                 }
             }
         }
