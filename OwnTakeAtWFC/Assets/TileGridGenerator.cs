@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System.Diagnostics;  // Added for Stopwatch
 
 public class TileGridGenerator : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class TileGridGenerator : MonoBehaviour
     void Start()
     {
         InitializeCellGrid();
-        GenerateGrid();
+        GenerateAndTimeGrid();  // Modified method call
     }
 
     void Update()
@@ -21,7 +22,7 @@ public class TileGridGenerator : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             ClearGrid();
-            GenerateGrid();
+            GenerateAndTimeGrid();  // Modified method call
         }
     }
 
@@ -41,6 +42,19 @@ public class TileGridGenerator : MonoBehaviour
         }
     }
 
+    void GenerateAndTimeGrid()  // New method to handle timing
+    {
+        Stopwatch stopwatch = new Stopwatch();  // Start timing
+        stopwatch.Start();
+
+        GenerateGrid();  // Generate the grid
+
+        stopwatch.Stop();  // Stop timing
+
+        // Print the elapsed time in seconds with millisecond precision
+        UnityEngine.Debug.Log($"GenerateGrid() took {stopwatch.Elapsed.TotalSeconds:F3} seconds ({stopwatch.Elapsed.TotalMilliseconds:F0} ms)");
+    }
+
     void GenerateGrid()
     {
         // Iterate through each cell to print neighbors and randomly select a tile
@@ -51,7 +65,6 @@ public class TileGridGenerator : MonoBehaviour
                 // Check if there are any possible tiles left
                 if (cellGrid[x, y].possibleTiles.Count == 0)
                 {
-                    //Debug.LogError($"No possible tiles left for cell ({x}, {y}).");
                     continue;
                 }
 
@@ -79,7 +92,6 @@ public class TileGridGenerator : MonoBehaviour
             }
         }
     }
-
 
     void ClearGrid()
     {
