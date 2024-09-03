@@ -55,6 +55,7 @@ public class TileGridGenerator : MonoBehaviour
         UnityEngine.Debug.Log($"GenerateGrid() took {stopwatch.Elapsed.TotalSeconds:F3} seconds ({stopwatch.Elapsed.TotalMilliseconds:F0} ms)");
     }
 
+    //Going Through Bottom Left to Top Right
     void GenerateGrid()
     {
         // Iterate through each cell to print neighbors and randomly select a tile
@@ -90,6 +91,67 @@ public class TileGridGenerator : MonoBehaviour
                 Vector3 position = new Vector3(x, 0, y);
                 cellGrid[x, y].instantiatedTile = Instantiate(selectedTilePrefab, position, Quaternion.identity);
             }
+        }
+    }
+
+    //Next Tile set is the one with the least options or tied with least
+    void GenerateGridLeastEntropy()
+    {
+        // Create a list of cells that need tiles to be set
+        List<(int x, int y)> unprocessedCells = new List<(int x, int y)>();
+
+        // Populate the list with all grid positions
+        for (int y = 0; y < gridSize; y++)
+        {
+            for (int x = 0; x < gridSize; x++)
+            {
+                if (!cellGrid[x, y].IsTileSet())
+                {
+                    unprocessedCells.Add((x, y));
+                }
+            }
+        }
+
+        // While there are still unprocessed cells
+        while (unprocessedCells.Count > 0)
+        {
+            // Sort the unprocessed cells by the number of possible tiles (ascending order)
+            unprocessedCells.Sort((a, b) => cellGrid[a.x, a.y].possibleTiles.Count.CompareTo(cellGrid[b.x, b.y].possibleTiles.Count));
+
+            // Get the cell with the fewest possible tiles
+            var cellPosition = unprocessedCells[0];
+            int x = cellPosition.x;
+            int y = cellPosition.y;
+
+            // If there are no possible tiles, skip this cell (this case shouldn't happen unless all options are eliminated)
+            if (cellGrid[x, y].possibleTiles.Count == 0)
+            {
+                unprocessedCells.RemoveAt(0);
+                continue;
+            }
+
+            // Randomly select a tile from the remaining possible tiles
+            GameObject selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
+
+            // Add all current possible tiles to the notChosenTiles list
+            cellGrid[x, y].notChosenTiles = new List<GameObject>(cellGrid[x, y].possibleTiles);
+
+            // Remove the selected tile from the notChosenTiles list and possibleTiles list
+            cellGrid[x, y].notChosenTiles.Remove(selectedTilePrefab);
+            cellGrid[x, y].possibleTiles.RemoveAll(tile => tile != selectedTilePrefab);
+
+            // Set the selected tile on the cell
+            cellGrid[x, y].SetTile(selectedTilePrefab);
+
+            // Instantiate the selected tile at the grid position
+            Vector3 position = new Vector3(x, 0, y);
+            cellGrid[x, y].instantiatedTile = Instantiate(selectedTilePrefab, position, Quaternion.identity);
+
+            // Set neighbors after placing the tile
+            SetNeighboursHorizontally(x, y);
+
+            // Remove this cell from the unprocessed list as it's now set
+            unprocessedCells.RemoveAt(0);
         }
     }
 
