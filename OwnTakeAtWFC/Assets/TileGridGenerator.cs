@@ -47,7 +47,7 @@ public class TileGridGenerator : MonoBehaviour
         Stopwatch stopwatch = new Stopwatch();  // Start timing
         stopwatch.Start();
 
-        GenerateGrid();  // Generate the grid
+        GenerateGridGoThroughEverything();  // Generate the grid
 
         stopwatch.Stop();  // Stop timing
 
@@ -84,6 +84,47 @@ public class TileGridGenerator : MonoBehaviour
                 for (int i = 0; i < gridSize; i++){
                     for(int z = 0; z < gridSize; z++){
                         if(!cellGrid[z,i].tileSet){
+                            SetNeighboursOnlyNeighbours(z,i);
+                        }
+                    }
+                }
+
+                // Instantiate the selected tile at the grid position
+                Vector3 position = new Vector3(x, 0, y);
+                cellGrid[x, y].instantiatedTile = Instantiate(selectedTilePrefab, position, Quaternion.identity);
+            }
+        }
+    }
+
+    //After each pass goes through each not set cell and each cell that has less than the original amount
+    void GenerateGridGoThroughEverything()
+    {
+        // Iterate through each cell to print neighbors and randomly select a tile
+        for (int y = 0; y < gridSize; y++)
+        {
+            for (int x = 0; x < gridSize; x++)
+            {
+                // Check if there are any possible tiles left
+                if (cellGrid[x, y].possibleTiles.Count == 0)
+                {
+                    continue;
+                }
+
+                // Randomly select a tile from the remaining possible tiles
+                GameObject selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
+
+                // Remove the selected tile from the possibleTiles list
+                cellGrid[x, y].possibleTiles.RemoveAll(tile => tile != selectedTilePrefab);
+
+                // Set the selected tile on the cell
+                cellGrid[x, y].SetTile(selectedTilePrefab);
+
+                // Proceed with setting neighbors and instantiating the tile
+                SetNeighboursHorizontally(x, y);
+
+                for (int i = 0; i < gridSize; i++){
+                    for(int z = 0; z < gridSize; z++){
+                        if(!cellGrid[z,i].tileSet && cellGrid[z,i].possibleTiles.Count != tilePrefabs.Count){
                             SetNeighboursOnlyNeighbours(z,i);
                         }
                     }
