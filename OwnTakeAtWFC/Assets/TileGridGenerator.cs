@@ -72,12 +72,6 @@ public class TileGridGenerator : MonoBehaviour
                 // Randomly select a tile from the remaining possible tiles
                 GameObject selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
 
-                // Add all current possible tiles to the notChosenTiles list
-                cellGrid[x, y].notChosenTiles = new List<GameObject>(cellGrid[x, y].possibleTiles);
-
-                // Remove the selected tile from notChosenTiles list
-                cellGrid[x, y].notChosenTiles.Remove(selectedTilePrefab);
-
                 // Remove the selected tile from the possibleTiles list
                 cellGrid[x, y].possibleTiles.RemoveAll(tile => tile != selectedTilePrefab);
 
@@ -86,6 +80,14 @@ public class TileGridGenerator : MonoBehaviour
 
                 // Proceed with setting neighbors and instantiating the tile
                 SetNeighboursHorizontally(x, y);
+
+                for (int i = 0; i < gridSize; i++){
+                    for(int z = 0; z < gridSize; z++){
+                        if(!cellGrid[z,i].tileSet){
+                            SetNeighboursOnlyNeighbours(z,i);
+                        }
+                    }
+                }
 
                 // Instantiate the selected tile at the grid position
                 Vector3 position = new Vector3(x, 0, y);
@@ -132,12 +134,6 @@ public class TileGridGenerator : MonoBehaviour
 
             // Randomly select a tile from the remaining possible tiles
             GameObject selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
-
-            // Add all current possible tiles to the notChosenTiles list
-            cellGrid[x, y].notChosenTiles = new List<GameObject>(cellGrid[x, y].possibleTiles);
-
-            // Remove the selected tile from the notChosenTiles list and possibleTiles list
-            cellGrid[x, y].notChosenTiles.Remove(selectedTilePrefab);
             cellGrid[x, y].possibleTiles.RemoveAll(tile => tile != selectedTilePrefab);
 
             // Set the selected tile on the cell
@@ -171,6 +167,7 @@ public class TileGridGenerator : MonoBehaviour
                 // Reinitialize the cell's possible tiles
                 cellGrid[x, y].possibleTiles = new List<GameObject>(tilePrefabs);
                 cellGrid[x, y].instantiatedTile = null;  // Clear reference to the instantiated tile
+                cellGrid[x,y].tileSet = false;
             }
         }
     }

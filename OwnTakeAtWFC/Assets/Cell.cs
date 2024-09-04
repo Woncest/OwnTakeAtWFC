@@ -7,6 +7,8 @@ public class Cell
     public List<GameObject> notChosenTiles;   // Tiles that were not chosen
     public GameObject instantiatedTile;       // The tile that has been instantiated in this cell
 
+    public bool tileSet = false;
+
     public Cell(List<GameObject> tiles)
     {
         possibleTiles = new List<GameObject>(tiles);
@@ -18,6 +20,7 @@ public class Cell
     public void SetTile(GameObject tile)
     {
         instantiatedTile = tile;
+        tileSet = true;
         // Remove the chosen tile from the list of not chosen tiles
         notChosenTiles.Remove(tile);
     }
