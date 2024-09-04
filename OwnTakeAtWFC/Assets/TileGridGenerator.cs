@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using System.Diagnostics;  // Added for Stopwatch
+using System.Diagnostics;
+using System.Net.NetworkInformation;  // Added for Stopwatch
 
 public class TileGridGenerator : MonoBehaviour
 {
@@ -236,6 +237,7 @@ public class TileGridGenerator : MonoBehaviour
                 // Check if the neighbor is within bounds
                 if (neighborX >= 0 && neighborX < gridSize && neighborY >= 0 && neighborY < gridSize)
                 {
+                    if(cellGrid[neighborX, neighborY].tileSet) continue;
                     // Create a combined allowed tiles list for the current direction
                     List<GameObject> combinedAllowedTiles = new List<GameObject>();
 
@@ -300,6 +302,7 @@ public class TileGridGenerator : MonoBehaviour
                 // Check if the neighbor is within bounds
                 if (neighborX >= 0 && neighborX < gridSize && neighborY >= 0 && neighborY < gridSize)
                 {
+                    if(cellGrid[neighborX, neighborY].tileSet) continue;
                     // Only proceed if the neighboring cell doesn't have a tile set yet
                     if (!cellGrid[neighborX, neighborY].IsTileSet())
                     {
@@ -368,6 +371,7 @@ public class TileGridGenerator : MonoBehaviour
                 // Check if the neighbor is within bounds
                 if (neighborX >= 0 && neighborX < gridSize && neighborY >= 0 && neighborY < gridSize)
                 {
+                    if(cellGrid[neighborX, neighborY].tileSet) continue;
                     // Proceed only if the neighboring cell hasn't set a tile yet
                     if (!cellGrid[neighborX, neighborY].IsTileSet())
                     {
