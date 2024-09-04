@@ -6,7 +6,6 @@ public class Cell
     public List<GameObject> possibleTiles;    // Possible tiles that can be placed in this cell
     public List<GameObject> notChosenTiles;   // Tiles that were not chosen
     public GameObject instantiatedTile;       // The tile that has been instantiated in this cell
-
     public bool tileSet = false;
 
     public Cell(List<GameObject> tiles)
