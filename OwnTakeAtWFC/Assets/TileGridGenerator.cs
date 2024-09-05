@@ -123,8 +123,8 @@ public class TileGridGenerator : MonoBehaviour
                 // Proceed with setting neighbors and instantiating the tile
                 SetNeighboursHorizontally(x, y);
 
-                for (int i = 0; i < gridSize; i++){
-                    for(int z = 0; z < gridSize; z++){
+                for (int i = gridSize - 1; i > 0; i--){
+                    for(int z = gridSize - 1; z > 0; z--){
                         if(!cellGrid[z,i].tileSet && cellGrid[z,i].possibleTiles.Count != tilePrefabs.Count){
                             SetNeighboursOnlyNeighbours(z,i);
                         }
