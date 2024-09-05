@@ -103,6 +103,14 @@ public class TileGridGenerator : MonoBehaviour
         // Iterate through each cell to print neighbors and randomly select a tile
         for (int y = 0; y < gridSize; y++)
         {
+            for (int i = gridSize - 1; i > 0; i--){
+                    for(int z = gridSize - 1; z > 0; z--){
+                        if(!cellGrid[z,i].tileSet && cellGrid[z,i].possibleTiles.Count != tilePrefabs.Count){
+                            SetNeighboursOnlyNeighbours(z,i);
+                        }
+                    }
+                }
+                
             for (int x = 0; x < gridSize; x++)
             {
                 // Check if there are any possible tiles left
@@ -122,14 +130,6 @@ public class TileGridGenerator : MonoBehaviour
 
                 // Proceed with setting neighbors and instantiating the tile
                 SetNeighboursHorizontally(x, y);
-
-                for (int i = gridSize - 1; i > 0; i--){
-                    for(int z = gridSize - 1; z > 0; z--){
-                        if(!cellGrid[z,i].tileSet && cellGrid[z,i].possibleTiles.Count != tilePrefabs.Count){
-                            SetNeighboursOnlyNeighbours(z,i);
-                        }
-                    }
-                }
 
                 // Instantiate the selected tile at the grid position
                 Vector3 position = new Vector3(x, 0, y);
