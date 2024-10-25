@@ -9,6 +9,8 @@ public class TileGridGenerator : MonoBehaviour
 {
     public int gridSize = 5;  // Size of the grid (gridSize x gridSize)
     public List<GameObject> tilePrefabs;  // Array of tile prefabs to choose from
+    public bool showGenerationProcess = true;  // New boolean to control visual generation
+    public float generationDelay = 0.01f;  // Delay between each tile generation
 
     private Cell[,] cellGrid;
 
@@ -48,12 +50,61 @@ public class TileGridGenerator : MonoBehaviour
         Stopwatch stopwatch = new Stopwatch();  // Start timing
         stopwatch.Start();
 
-        GenerateGridGoThroughEverything();  // Generate the grid
+        if (showGenerationProcess)
+        {
+            StartCoroutine(GenerateGridWithVisualProcess());  // Start coroutine for visual generation
+        }
+        else
+        {
+            GenerateGridGoThroughEverything();  // Generate the grid normally
+        }
 
         stopwatch.Stop();  // Stop timing
 
         // Print the elapsed time in seconds with millisecond precision
         UnityEngine.Debug.Log($"GenerateGrid() took {stopwatch.Elapsed.TotalSeconds:F3} seconds ({stopwatch.Elapsed.TotalMilliseconds:F0} ms)");
+    }
+
+    IEnumerator GenerateGridWithVisualProcess()  // New coroutine for visual generation
+    {
+        // Iterate through each cell to print neighbors and randomly select a tile
+        for (int y = 0; y < gridSize; y++)
+        {
+            for (int i = gridSize - 1; i > 0; i--){
+                    for(int z = gridSize - 1; z > 0; z--){
+                        if(!cellGrid[z,i].tileSet && cellGrid[z,i].possibleTiles.Count != tilePrefabs.Count){
+                            SetNeighboursOnlyNeighbours(z,i);
+                        }
+                    }
+                }
+            for (int x = 0; x < gridSize; x++)
+            {
+                // Check if there are any possible tiles left
+                if (cellGrid[x, y].possibleTiles.Count == 0)
+                {
+                    continue;
+                }
+
+                // Randomly select a tile from the remaining possible tiles
+                GameObject selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
+
+                // Remove the selected tile from the possibleTiles list
+                cellGrid[x, y].possibleTiles.RemoveAll(tile => tile != selectedTilePrefab);
+
+                // Set the selected tile on the cell
+                cellGrid[x, y].SetTile(selectedTilePrefab);
+
+                // Proceed with setting neighbors and instantiating the tile
+                SetNeighboursHorizontally(x, y);
+
+                // Instantiate the selected tile at the grid position
+                Vector3 position = new Vector3(x, 0, y);
+                cellGrid[x, y].instantiatedTile = Instantiate(selectedTilePrefab, position, Quaternion.identity);
+
+                // Wait for a specified delay before moving to the next tile, allowing visualization
+                yield return new WaitForSeconds(generationDelay);
+            }
+        }
     }
 
     //Going Through Bottom Left to Top Right
@@ -278,6 +329,7 @@ public class TileGridGenerator : MonoBehaviour
     }
 
     //RECURSIVE PERHAPS FAULTY
+    //TODO FIX?
     void SetNeighboursRecursive(int x, int y)
     {
         // Define directions and corresponding allowed tile lists

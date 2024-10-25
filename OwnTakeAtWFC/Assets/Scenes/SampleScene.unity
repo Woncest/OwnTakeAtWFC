@@ -353,7 +353,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d5d79931ce37a141be6739066013fe7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSize: 25
+  gridSize: 50
   tilePrefabs:
   - {fileID: 3266129857468719318, guid: 082e3b45bbfb51740ac9e3f0bab33519, type: 3}
   - {fileID: 8516727776871553884, guid: d878e2b84bca92e4f877a41ebd3d385c, type: 3}
@@ -367,6 +367,8 @@ MonoBehaviour:
   - {fileID: 82470378073823370, guid: beb2c5bb8e5be5b4abb0edf32efce7a1, type: 3}
   - {fileID: 8188063326001653716, guid: 3bb4b820b063dda4cabbbe2e2fedbef8, type: 3}
   - {fileID: 340799602625160344, guid: 43c3d2ab437758140b4f0ce69093d644, type: 3}
+  showGenerationProcess: 1
+  generationDelay: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
