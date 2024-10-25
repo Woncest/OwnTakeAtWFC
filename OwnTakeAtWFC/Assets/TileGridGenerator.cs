@@ -62,7 +62,8 @@ public class TileGridGenerator : MonoBehaviour
         stopwatch.Stop();  // Stop timing
 
         // Print the elapsed time in seconds with millisecond precision
-        UnityEngine.Debug.Log($"GenerateGrid() took {stopwatch.Elapsed.TotalSeconds:F3} seconds ({stopwatch.Elapsed.TotalMilliseconds:F0} ms)");
+        // TODO if you also want the time when showing the processs fix it for showing the process
+        if(!showGenerationProcess) UnityEngine.Debug.Log($"GenerateGrid() took {stopwatch.Elapsed.TotalSeconds:F3} seconds ({stopwatch.Elapsed.TotalMilliseconds:F0} ms)");
     }
 
     IEnumerator GenerateGridWithVisualProcess()  // New coroutine for visual generation
