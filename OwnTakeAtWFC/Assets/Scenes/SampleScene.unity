@@ -511,8 +511,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Enter text...
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 0}
-  m_sharedMaterial: {fileID: 0}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -562,7 +562,7 @@ MonoBehaviour:
   checkPaddingRequired: 0
   m_isRichText: 1
   m_parseCtrlCharacters: 1
-  m_isOrthographic: 0
+  m_isOrthographic: 1
   m_isCullingEnabled: 0
   m_horizontalMapping: 0
   m_verticalMapping: 0
@@ -692,6 +692,7 @@ GameObject:
   - component: {fileID: 889649227}
   - component: {fileID: 889649226}
   - component: {fileID: 889649225}
+  - component: {fileID: 889649228}
   m_Layer: 5
   m_Name: Dimension Input
   m_TagString: Untagged
@@ -856,6 +857,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 889649223}
   m_CullTransparentMesh: 1
+--- !u!114 &889649228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 889649223}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f11901bc892f274399c28100d082567, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultValue: 25
+  tileGridGenerator: {fileID: 2104926823}
 --- !u!1 &901181822
 GameObject:
   m_ObjectHideFlags: 0
@@ -1584,6 +1599,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gridSize: 25
+  newGridSize: 5
+  cameraZoomController: {fileID: 963194229}
   tilePrefabs:
   - {fileID: 3266129857468719318, guid: 082e3b45bbfb51740ac9e3f0bab33519, type: 3}
   - {fileID: 8516727776871553884, guid: d878e2b84bca92e4f877a41ebd3d385c, type: 3}

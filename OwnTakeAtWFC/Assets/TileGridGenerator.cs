@@ -1,13 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using System.Diagnostics;
-using System.Net.NetworkInformation;  // Added for Stopwatch
 
 public class TileGridGenerator : MonoBehaviour
 {
     public int gridSize = 5;  // Size of the grid (gridSize x gridSize)
+
+    [HideInInspector] public int newGridSize = 5;
+    public CameraZoomController cameraZoomController;
     public List<GameObject> tilePrefabs;  // Array of tile prefabs to choose from
     public bool showGenerationProcess = true;  // New boolean to control visual generation
     public float generationDelay = 0.01f;  // Delay between each tile generation
@@ -18,6 +19,7 @@ public class TileGridGenerator : MonoBehaviour
     {
         InitializeCellGrid();
         GenerateAndTimeGrid();  // Modified method call
+        newGridSize = gridSize;
     }
 
     void Update()
@@ -25,6 +27,9 @@ public class TileGridGenerator : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             ClearGrid();
+            gridSize = newGridSize;
+            cameraZoomController.AdjustZoom();
+            InitializeCellGrid();
             GenerateAndTimeGrid();  // Modified method call
         }
     }
