@@ -12,6 +12,7 @@ public class TileGridGenerator : MonoBehaviour
     public List<GameObject> tilePrefabs;  // Array of tile prefabs to choose from
     public bool showGenerationProcess = true;  // New boolean to control visual generation
     public float generationDelay = 0.01f;  // Delay between each tile generation
+    private Coroutine coroutine;
 
     private Cell[,] cellGrid;
 
@@ -26,6 +27,11 @@ public class TileGridGenerator : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            if (coroutine != null)
+            {
+                StopCoroutine(coroutine);
+                coroutine = null;
+            }
             ClearGrid();
             gridSize = newGridSize;
             cameraZoomController.AdjustZoom();
@@ -57,7 +63,7 @@ public class TileGridGenerator : MonoBehaviour
 
         if (showGenerationProcess)
         {
-            StartCoroutine(GenerateGridWithVisualProcess());  // Start coroutine for visual generation
+            coroutine = StartCoroutine(GenerateGridWithVisualProcess());  // Start coroutine for visual generation
         }
         else
         {
