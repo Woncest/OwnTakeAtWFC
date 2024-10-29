@@ -9,7 +9,7 @@ public class TileGridGenerator : MonoBehaviour
 
     [HideInInspector] public int newGridSize = 5;
     public CameraZoomController cameraZoomController;
-    public List<GameObject> tilePrefabs;  // Array of tile prefabs to choose from
+    [HideInInspector] public List<GameObject> tilePrefabs;  // Array of tile prefabs to choose from
     public bool showGenerationProcess = true;  // New boolean to control visual generation
     public float generationDelay = 0.01f;  // Delay between each tile generation
     private Coroutine coroutine;
