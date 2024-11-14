@@ -197,6 +197,10 @@ public class TileGridGenerator : MonoBehaviour
                 // Instantiate the selected tile at the grid position
                 Vector3 position = new Vector3(x, 0, y);
                 cellGrid[x, y].instantiatedTile = Instantiate(selectedTilePrefab, position, Quaternion.identity);
+
+                if(selectedTilePrefab.gameObject.name == "Street_Straight" || selectedTilePrefab.gameObject.name == "Street_Straight (1)"){
+                    UnityEngine.Debug.Log("Do Something");
+                }
             }
         }
     }
