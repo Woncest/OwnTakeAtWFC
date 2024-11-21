@@ -177,7 +177,7 @@ public class TileGridGenerator : MonoBehaviour
             for (int x = 0; x < gridSize; x++)
             {
                 // Check if there are any possible tiles left
-                if (cellGrid[x, y].possibleTiles.Count == 0)
+                if (cellGrid[x, y].possibleTiles.Count == 0 || cellGrid[x, y].tileSet)
                 {
                     continue;
                 }
