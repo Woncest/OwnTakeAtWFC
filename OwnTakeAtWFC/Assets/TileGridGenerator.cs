@@ -200,6 +200,7 @@ public class TileGridGenerator : MonoBehaviour
 
                 if(selectedTilePrefab.gameObject.name == "Street_Straight" || selectedTilePrefab.gameObject.name == "Street_Straight (1)"){
                     UnityEngine.Debug.Log("Do Something");
+                    break;
                 }
             }
         }
