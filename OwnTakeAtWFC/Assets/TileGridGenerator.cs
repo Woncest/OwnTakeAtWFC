@@ -118,7 +118,7 @@ public class TileGridGenerator : MonoBehaviour
             }
         }
     }
-
+#region PastExample
     //Going Through Bottom Left to Top Right
     void GenerateGrid()
     {
@@ -159,7 +159,7 @@ public class TileGridGenerator : MonoBehaviour
             }
         }
     }
-
+#endregion
     //After each pass goes through each not set cell and each cell that has less than the original amount
     void GenerateGridGoThroughEverything()
     {
@@ -205,7 +205,7 @@ public class TileGridGenerator : MonoBehaviour
             }
         }
     }
-
+#region PastExample
     //Next Tile set is the one with the least options or tied with least
     void GenerateGridLeastEntropy()
     {
@@ -260,7 +260,7 @@ public class TileGridGenerator : MonoBehaviour
             unprocessedCells.RemoveAt(0);
         }
     }
-
+#endregion
     void ClearGrid()
     {
         // Destroy all instantiated tiles and clear cell grid data
@@ -498,6 +498,10 @@ public class TileGridGenerator : MonoBehaviour
     {
         // Check horizontal neighbors (left and right) and propagate
         SetNeighboursOnlyNeighbours(x, y);  // Make sure to limit it to just the direct neighbors
+    }
+
+    private void DoSomething(int x, int y){
+
     }
 
 }
