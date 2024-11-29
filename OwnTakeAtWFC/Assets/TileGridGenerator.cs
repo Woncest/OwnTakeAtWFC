@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Diagnostics;
+using System.Linq;
 
 public class TileGridGenerator : MonoBehaviour
 {
@@ -156,6 +157,18 @@ public class TileGridGenerator : MonoBehaviour
                 // Instantiate the selected tile at the grid position
                 Vector3 position = new Vector3(x, 0, y);
                 cellGrid[x, y].instantiatedTile = Instantiate(selectedTilePrefab, position, Quaternion.identity);
+
+                if(selectedTilePrefab.gameObject.name == "Street_Straight"){
+                    DoSomethingHorizontal(x, y);
+                    UnityEngine.Debug.Log("Do Something Horizontal");
+                    break;
+                }
+
+                if(selectedTilePrefab.gameObject.name == "Street_Straight (1)"){
+                    DoSomethingVertical(x, y);
+                    UnityEngine.Debug.Log("Do Something Vertical");
+                    break;
+                }
             }
         }
     }
@@ -172,6 +185,10 @@ public class TileGridGenerator : MonoBehaviour
                             SetNeighboursOnlyNeighbours(z,i);
                         }
                     }
+                }
+
+                if(y != 0){
+                    break;
                 }
                 
             for (int x = 0; x < gridSize; x++)
@@ -198,8 +215,15 @@ public class TileGridGenerator : MonoBehaviour
                 Vector3 position = new Vector3(x, 0, y);
                 cellGrid[x, y].instantiatedTile = Instantiate(selectedTilePrefab, position, Quaternion.identity);
 
-                if(selectedTilePrefab.gameObject.name == "Street_Straight" || selectedTilePrefab.gameObject.name == "Street_Straight (1)"){
-                    UnityEngine.Debug.Log("Do Something");
+                if(selectedTilePrefab.gameObject.name == "Street_Straight"){
+                    DoSomethingHorizontal(x, y);
+                    UnityEngine.Debug.Log("Do Something Horizontal");
+                    break;
+                }
+
+                if(selectedTilePrefab.gameObject.name == "Street_Straight (1)"){
+                    DoSomethingVertical(x, y);
+                    UnityEngine.Debug.Log("Do Something Vertical");
                     break;
                 }
             }
@@ -500,8 +524,65 @@ public class TileGridGenerator : MonoBehaviour
         SetNeighboursOnlyNeighbours(x, y);  // Make sure to limit it to just the direct neighbors
     }
 
-    private void DoSomething(int x, int y){
+    private void DoSomethingHorizontal(int x, int y){
+        //Set the horizontal Line (currently fix 3 long)
+        for (int i = x + 1; i < 3 + x; i++) 
+        {
+            foreach(GameObject tile in cellGrid[i, y].possibleTiles){
+                UnityEngine.Debug.Log(tile.name);
+            }
+            //cellGrid[i, y].possibleTiles = cellGrid[i, y].possibleTiles
+            //    .Where(tile => tile.name == "Street_Straight")
+            //    .ToList();
 
+            if(cellGrid[i, y].tileSet){
+                UnityEngine.Debug.LogError("Should be empty ? " + cellGrid[i, y].instantiatedTile.name);
+                break;
+            }
+
+            cellGrid[i, y].possibleTiles = tilePrefabs
+                .Where(tile => tile.name == "Street_Straight")
+                .ToList();
+            
+            // Set the selected tile on the cell
+            cellGrid[i, y].SetTile(cellGrid[i, y].possibleTiles.First());
+
+            // Proceed with setting neighbors and instantiating the tile
+            SetNeighboursHorizontally(i, y);
+
+            // Instantiate the selected tile at the grid position
+            Vector3 position = new Vector3(i, 0, y);
+            cellGrid[i, y].instantiatedTile = Instantiate(cellGrid[i, y].possibleTiles.First(), position, Quaternion.identity);
+        }
+    }
+
+    private void DoSomethingVertical(int x, int y){
+        //Set the vertical Line (currently fix 3 long)
+        for (int i = y + 1; i < 3 + y; i++) 
+        {
+            //cellGrid[x, i].possibleTiles = cellGrid[x, i].possibleTiles
+            //    .Where(tile => tile.name == "Street_Straight (1)")
+            //    .ToList();
+            
+            cellGrid[x, i].possibleTiles = tilePrefabs
+                .Where(tile => tile.name == "Street_Straight (1)")
+                .ToList();
+
+            if(cellGrid[x, i].tileSet){
+            UnityEngine.Debug.LogError("Should be empty ?");
+            break;
+            }
+
+            // Set the selected tile on the cell
+            cellGrid[x, i].SetTile(cellGrid[x, i].possibleTiles.First());
+
+            // Proceed with setting neighbors and instantiating the tile
+            SetNeighboursHorizontally(x, i);
+
+            // Instantiate the selected tile at the grid position
+            Vector3 position = new Vector3(x, 0, i);
+            cellGrid[x, i].instantiatedTile = Instantiate(cellGrid[x, i].possibleTiles.First(), position, Quaternion.identity);
+        }
     }
 
 }
