@@ -57,6 +57,21 @@ public class TileGridGenerator : MonoBehaviour
         }
     }
 
+    void RepopulateCellGrid(){
+        // First, initialize all the cells in the grid
+        for (int y = 0; y < gridSize; y++)
+        {
+            for (int x = 0; x < gridSize; x++)
+            {
+                if(cellGrid[x, y].tileSet){
+                    continue;
+                }
+                // Create a new Cell at the current grid position with all possible tiles
+                cellGrid[x, y] = new Cell(tilePrefabs);
+            }
+        }
+    }
+
     void GenerateAndTimeGrid()  // New method to handle timing
     {
         Stopwatch stopwatch = new Stopwatch();  // Start timing
@@ -157,18 +172,6 @@ public class TileGridGenerator : MonoBehaviour
                 // Instantiate the selected tile at the grid position
                 Vector3 position = new Vector3(x, 0, y);
                 cellGrid[x, y].instantiatedTile = Instantiate(selectedTilePrefab, position, Quaternion.identity);
-
-                if(selectedTilePrefab.gameObject.name == "Street_Straight"){
-                    DoSomethingHorizontal(x, y);
-                    UnityEngine.Debug.Log("Do Something Horizontal");
-                    break;
-                }
-
-                if(selectedTilePrefab.gameObject.name == "Street_Straight (1)"){
-                    DoSomethingVertical(x, y);
-                    UnityEngine.Debug.Log("Do Something Vertical");
-                    break;
-                }
             }
         }
     }
@@ -179,6 +182,8 @@ public class TileGridGenerator : MonoBehaviour
         // Iterate through each cell to print neighbors and randomly select a tile
         for (int y = 0; y < gridSize; y++)
         {
+            //RepopulateCellGrid();
+
             for (int i = gridSize - 1; i > 0; i--){
                     for(int z = gridSize - 1; z > 0; z--){
                         if(!cellGrid[z,i].tileSet && cellGrid[z,i].possibleTiles.Count != tilePrefabs.Count){
@@ -187,9 +192,9 @@ public class TileGridGenerator : MonoBehaviour
                     }
                 }
 
-                if(y != 0){
+                /*if(y != 0){
                     break;
-                }
+                }*/
                 
             for (int x = 0; x < gridSize; x++)
             {
@@ -214,6 +219,8 @@ public class TileGridGenerator : MonoBehaviour
                 // Instantiate the selected tile at the grid position
                 Vector3 position = new Vector3(x, 0, y);
                 cellGrid[x, y].instantiatedTile = Instantiate(selectedTilePrefab, position, Quaternion.identity);
+
+                //TODO only do stuff when you are setting a non straig street or empty tile
 
                 if(selectedTilePrefab.gameObject.name == "Street_Straight"){
                     DoSomethingHorizontal(x, y);
@@ -528,17 +535,17 @@ public class TileGridGenerator : MonoBehaviour
         //Set the horizontal Line (currently fix 3 long)
         for (int i = x + 1; i < 3 + x; i++) 
         {
+            if(i >= gridSize || cellGrid[i, y].tileSet){
+                UnityEngine.Debug.LogError("Should be empty ? " + cellGrid[i, y].instantiatedTile.name);
+                break;
+            }
+
             foreach(GameObject tile in cellGrid[i, y].possibleTiles){
                 UnityEngine.Debug.Log(tile.name);
             }
             //cellGrid[i, y].possibleTiles = cellGrid[i, y].possibleTiles
             //    .Where(tile => tile.name == "Street_Straight")
             //    .ToList();
-
-            if(cellGrid[i, y].tileSet){
-                UnityEngine.Debug.LogError("Should be empty ? " + cellGrid[i, y].instantiatedTile.name);
-                break;
-            }
 
             cellGrid[i, y].possibleTiles = tilePrefabs
                 .Where(tile => tile.name == "Street_Straight")
@@ -560,6 +567,11 @@ public class TileGridGenerator : MonoBehaviour
         //Set the vertical Line (currently fix 3 long)
         for (int i = y + 1; i < 3 + y; i++) 
         {
+            if(i >= gridSize || cellGrid[i, y].tileSet){
+            UnityEngine.Debug.LogError("Should be empty ?");
+            break;
+            }
+
             //cellGrid[x, i].possibleTiles = cellGrid[x, i].possibleTiles
             //    .Where(tile => tile.name == "Street_Straight (1)")
             //    .ToList();
@@ -567,11 +579,6 @@ public class TileGridGenerator : MonoBehaviour
             cellGrid[x, i].possibleTiles = tilePrefabs
                 .Where(tile => tile.name == "Street_Straight (1)")
                 .ToList();
-
-            if(cellGrid[x, i].tileSet){
-            UnityEngine.Debug.LogError("Should be empty ?");
-            break;
-            }
 
             // Set the selected tile on the cell
             cellGrid[x, i].SetTile(cellGrid[x, i].possibleTiles.First());
