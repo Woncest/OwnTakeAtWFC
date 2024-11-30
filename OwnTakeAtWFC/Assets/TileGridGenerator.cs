@@ -192,9 +192,9 @@ public class TileGridGenerator : MonoBehaviour
                     }
                 }
 
-                /*if(y != 0){
+                if(y != 0){
                     break;
-                }*/
+                }
                 
             for (int x = 0; x < gridSize; x++)
             {
@@ -221,6 +221,18 @@ public class TileGridGenerator : MonoBehaviour
                 cellGrid[x, y].instantiatedTile = Instantiate(selectedTilePrefab, position, Quaternion.identity);
 
                 //TODO only do stuff when you are setting a non straig street or empty tile
+
+                if (selectedTilePrefab.GetComponent<Tile>().allowedAbove.Any(tile => tile.name == "Street_Straight")) 
+                {
+                    // Do something if the tile "Street_Straight" is in the possibleTiles list
+                    UnityEngine.Debug.Log("Street_Straight tile found at cellGrid[" + x + ", " + y + "]");
+                }
+
+                if (selectedTilePrefab.GetComponent<Tile>().allowedLeft.Any(tile => tile.name == "Street_Straight (1)")) 
+                {
+                    // Do something if the tile "Street_Straight" is in the possibleTiles list
+                    UnityEngine.Debug.Log("Street_Straight (1) tile found at cellGrid[" + x + ", " + y + "]");
+                }
 
                 if(selectedTilePrefab.gameObject.name == "Street_Straight"){
                     DoSomethingHorizontal(x, y);
@@ -567,7 +579,7 @@ public class TileGridGenerator : MonoBehaviour
         //Set the vertical Line (currently fix 3 long)
         for (int i = y + 1; i < 3 + y; i++) 
         {
-            if(i >= gridSize || cellGrid[i, y].tileSet){
+            if(i >= gridSize || cellGrid[x, i].tileSet){
             UnityEngine.Debug.LogError("Should be empty ?");
             break;
             }
