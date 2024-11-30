@@ -192,7 +192,7 @@ public class TileGridGenerator : MonoBehaviour
                     }
                 }
 
-                if(y != 0){
+                if(y > 0){
                     break;
                 }
                 
@@ -226,15 +226,19 @@ public class TileGridGenerator : MonoBehaviour
                 {
                     // Do something if the tile "Street_Straight" is in the possibleTiles list
                     UnityEngine.Debug.Log("Street_Straight tile found at cellGrid[" + x + ", " + y + "]");
+                    DoSomethingHorizontal(x, y);
+                    UnityEngine.Debug.Log("Do Something Horizontal");
                 }
 
                 if (selectedTilePrefab.GetComponent<Tile>().allowedLeft.Any(tile => tile.name == "Street_Straight (1)")) 
                 {
                     // Do something if the tile "Street_Straight" is in the possibleTiles list
                     UnityEngine.Debug.Log("Street_Straight (1) tile found at cellGrid[" + x + ", " + y + "]");
+                    DoSomethingVertical(x, y);
+                    UnityEngine.Debug.Log("Do Something Vertical");
                 }
 
-                if(selectedTilePrefab.gameObject.name == "Street_Straight"){
+                /*if(selectedTilePrefab.gameObject.name == "Street_Straight"){
                     DoSomethingHorizontal(x, y);
                     UnityEngine.Debug.Log("Do Something Horizontal");
                     break;
@@ -244,7 +248,7 @@ public class TileGridGenerator : MonoBehaviour
                     DoSomethingVertical(x, y);
                     UnityEngine.Debug.Log("Do Something Vertical");
                     break;
-                }
+                }*/
             }
         }
     }
@@ -544,10 +548,14 @@ public class TileGridGenerator : MonoBehaviour
     }
 
     private void DoSomethingHorizontal(int x, int y){
-        //Set the horizontal Line (currently fix 3 long)
-        for (int i = x + 1; i < 3 + x; i++) 
+        //Set the horizontal Line (currently fix 3 long) Number - 1 == the length (ex. 1 < 4 + y == 3)
+        for (int i = x + 1; i < 4 + x; i++) 
         {
-            if(i >= gridSize || cellGrid[i, y].tileSet){
+            if(i >= gridSize){
+                break;
+            }
+
+            if(cellGrid[i, y].tileSet){
                 UnityEngine.Debug.LogError("Should be empty ? " + cellGrid[i, y].instantiatedTile.name);
                 break;
             }
@@ -576,11 +584,15 @@ public class TileGridGenerator : MonoBehaviour
     }
 
     private void DoSomethingVertical(int x, int y){
-        //Set the vertical Line (currently fix 3 long)
-        for (int i = y + 1; i < 3 + y; i++) 
+        //Set the vertical Line (currently fix 3 long) Number - 1 == the length (ex. 1 < 4 + y == 3)
+        for (int i = y + 1; i < 4 + y; i++) 
         {
-            if(i >= gridSize || cellGrid[x, i].tileSet){
-            UnityEngine.Debug.LogError("Should be empty ?");
+            if(i >= gridSize){
+                break;
+            }
+            
+            if(cellGrid[x, i].tileSet){
+            UnityEngine.Debug.LogError("Should be empty ?" + cellGrid[i, y].instantiatedTile.name);
             break;
             }
 
