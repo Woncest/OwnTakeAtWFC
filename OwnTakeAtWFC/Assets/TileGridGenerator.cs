@@ -184,18 +184,13 @@ public class TileGridGenerator : MonoBehaviour
         {
             //RepopulateCellGrid();
 
-            for (int i = gridSize - 1; i > 0; i--){
-                    for(int z = gridSize - 1; z > 0; z--){
-                        if(!cellGrid[z,i].tileSet && cellGrid[z,i].possibleTiles.Count != tilePrefabs.Count){
-                            SetNeighboursOnlyNeighbours(z,i);
-                        }
-                    }
-                }
+            GoThroughEverything();
 
-                if(y > 0){
-                    break;
-                }
-                
+            if (y > 0)
+            {
+                break;
+            }
+
             for (int x = 0; x < gridSize; x++)
             {
                 // Check if there are any possible tiles left
@@ -222,7 +217,7 @@ public class TileGridGenerator : MonoBehaviour
 
                 //TODO only do stuff when you are setting a non straig street or empty tile
 
-                if (selectedTilePrefab.GetComponent<Tile>().allowedAbove.Any(tile => tile.name == "Street_Straight")) 
+                if (selectedTilePrefab.GetComponent<Tile>().allowedAbove.Any(tile => tile.name == "Street_Straight"))
                 {
                     // Do something if the tile "Street_Straight" is in the possibleTiles list
                     UnityEngine.Debug.Log("Street_Straight tile found at cellGrid[" + x + ", " + y + "]");
@@ -230,7 +225,7 @@ public class TileGridGenerator : MonoBehaviour
                     UnityEngine.Debug.Log("Do Something Horizontal");
                 }
 
-                if (selectedTilePrefab.GetComponent<Tile>().allowedLeft.Any(tile => tile.name == "Street_Straight (1)")) 
+                if (selectedTilePrefab.GetComponent<Tile>().allowedLeft.Any(tile => tile.name == "Street_Straight (1)"))
                 {
                     // Do something if the tile "Street_Straight" is in the possibleTiles list
                     UnityEngine.Debug.Log("Street_Straight (1) tile found at cellGrid[" + x + ", " + y + "]");
@@ -252,7 +247,8 @@ public class TileGridGenerator : MonoBehaviour
             }
         }
     }
-#region PastExample
+
+    #region PastExample
     //Next Tile set is the one with the least options or tied with least
     void GenerateGridLeastEntropy()
     {
@@ -574,12 +570,24 @@ public class TileGridGenerator : MonoBehaviour
             // Set the selected tile on the cell
             cellGrid[i, y].SetTile(cellGrid[i, y].possibleTiles.First());
 
-            // Proceed with setting neighbors and instantiating the tile
-            SetNeighboursHorizontally(i, y);
-
             // Instantiate the selected tile at the grid position
             Vector3 position = new Vector3(i, 0, y);
             cellGrid[i, y].instantiatedTile = Instantiate(cellGrid[i, y].possibleTiles.First(), position, Quaternion.identity);
+
+            //TODO set allowedUp and allowedLeft and allowedRight
+            if(i + 1 < gridSize){
+                //allowedAbove
+                cellGrid[i + 1, y].possibleTiles = cellGrid[i, y].instantiatedTile.GetComponent<Tile>().allowedAbove;
+            }
+            if(y + 1 < gridSize){
+                //allowedLeft
+                cellGrid[i, y + 1].possibleTiles = cellGrid[i, y].instantiatedTile.GetComponent<Tile>().allowedLeft;
+            }
+            if(y - 1 >= 0){
+                //allowedRight
+                cellGrid[i, y - 1].possibleTiles = cellGrid[i, y].instantiatedTile.GetComponent<Tile>().allowedRight;
+            }
+            GoThroughEverything();
         }
     }
 
@@ -607,12 +615,38 @@ public class TileGridGenerator : MonoBehaviour
             // Set the selected tile on the cell
             cellGrid[x, i].SetTile(cellGrid[x, i].possibleTiles.First());
 
-            // Proceed with setting neighbors and instantiating the tile
-            SetNeighboursHorizontally(x, i);
-
             // Instantiate the selected tile at the grid position
             Vector3 position = new Vector3(x, 0, i);
             cellGrid[x, i].instantiatedTile = Instantiate(cellGrid[x, i].possibleTiles.First(), position, Quaternion.identity);
+
+            //TODO set allowedUp and allowedLeft and allowedDown
+            if(i + 1 < gridSize){
+                //allowedLeft
+                cellGrid[x, i + 1].possibleTiles = cellGrid[x, i].instantiatedTile.GetComponent<Tile>().allowedLeft;
+            }
+            if(x + 1 < gridSize){
+                //allowedUp
+                cellGrid[x + 1, i].possibleTiles = cellGrid[x, i].instantiatedTile.GetComponent<Tile>().allowedAbove;
+            }
+            if(x - 1 >= 0){
+                //allowedDown
+                cellGrid[x - 1, i].possibleTiles = cellGrid[x, i].instantiatedTile.GetComponent<Tile>().allowedBelow;
+            }
+            GoThroughEverything();
+        }
+    }
+
+    private void GoThroughEverything()
+    {
+        for (int i = gridSize - 1; i > 0; i--)
+        {
+            for (int z = gridSize - 1; z > 0; z--)
+            {
+                if (!cellGrid[z, i].tileSet && cellGrid[z, i].possibleTiles.Count != tilePrefabs.Count)
+                {
+                    SetNeighboursOnlyNeighbours(z, i);
+                }
+            }
         }
     }
 
