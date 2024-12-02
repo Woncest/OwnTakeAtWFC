@@ -637,6 +637,7 @@ public class TileGridGenerator : MonoBehaviour
                 //allowedDown
                 cellGrid[x - 1, i].possibleTiles = cellGrid[x, i].instantiatedTile.GetComponent<Tile>().allowedBelow;
             }
+            //TODO add that before we reset all options in cells
             GoThroughEverything();
         }
     }
