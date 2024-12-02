@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 public class TileGridGenerator : MonoBehaviour
 {
@@ -219,18 +220,12 @@ public class TileGridGenerator : MonoBehaviour
 
                 if (selectedTilePrefab.GetComponent<Tile>().allowedAbove.Any(tile => tile.name == "Street_Straight"))
                 {
-                    // Do something if the tile "Street_Straight" is in the possibleTiles list
-                    UnityEngine.Debug.Log("Street_Straight tile found at cellGrid[" + x + ", " + y + "]");
                     DoSomethingHorizontal(x, y);
-                    UnityEngine.Debug.Log("Do Something Horizontal");
                 }
 
                 if (selectedTilePrefab.GetComponent<Tile>().allowedLeft.Any(tile => tile.name == "Street_Straight (1)"))
                 {
-                    // Do something if the tile "Street_Straight" is in the possibleTiles list
-                    UnityEngine.Debug.Log("Street_Straight (1) tile found at cellGrid[" + x + ", " + y + "]");
                     DoSomethingVertical(x, y);
-                    UnityEngine.Debug.Log("Do Something Vertical");
                 }
 
                 /*if(selectedTilePrefab.gameObject.name == "Street_Straight"){
@@ -545,6 +540,7 @@ public class TileGridGenerator : MonoBehaviour
 
     private void DoSomethingHorizontal(int x, int y){
         //Set the horizontal Line (currently fix 3 long) Number - 1 == the length (ex. 1 < 4 + y == 3)
+        UnityEngine.Debug.Log("Method Starts with x:" + x + " y:" + y);
         for (int i = x + 1; i < 4 + x; i++) 
         {
             if(i >= gridSize){
@@ -556,28 +552,23 @@ public class TileGridGenerator : MonoBehaviour
                 break;
             }
 
-            foreach(GameObject tile in cellGrid[i, y].possibleTiles){
-                UnityEngine.Debug.Log(tile.name);
-            }
-            //cellGrid[i, y].possibleTiles = cellGrid[i, y].possibleTiles
-            //    .Where(tile => tile.name == "Street_Straight")
-            //    .ToList();
-
-            cellGrid[i, y].possibleTiles = tilePrefabs
-                .Where(tile => tile.name == "Street_Straight")
-                .ToList();
+            cellGrid[i, y].possibleTiles = cellGrid[i, y].possibleTiles
+            .Where(tile => Regex.IsMatch(tile.name, @"^Street_Straight(\(Clone\))*$"))
+            .ToList();
             
             // Set the selected tile on the cell
             cellGrid[i, y].SetTile(cellGrid[i, y].possibleTiles.First());
 
             // Instantiate the selected tile at the grid position
             Vector3 position = new Vector3(i, 0, y);
+            Instantiate(cellGrid[i, y].possibleTiles.First(), position, Quaternion.identity);
             cellGrid[i, y].instantiatedTile = Instantiate(cellGrid[i, y].possibleTiles.First(), position, Quaternion.identity);
 
             //TODO set allowedUp and allowedLeft and allowedRight
             if(i + 1 < gridSize){
                 //allowedAbove
                 cellGrid[i + 1, y].possibleTiles = cellGrid[i, y].instantiatedTile.GetComponent<Tile>().allowedAbove;
+                
             }
             if(y + 1 < gridSize){
                 //allowedLeft
@@ -604,13 +595,18 @@ public class TileGridGenerator : MonoBehaviour
             break;
             }
 
-            //cellGrid[x, i].possibleTiles = cellGrid[x, i].possibleTiles
-            //    .Where(tile => tile.name == "Street_Straight (1)")
-            //    .ToList();
-            
-            cellGrid[x, i].possibleTiles = tilePrefabs
-                .Where(tile => tile.name == "Street_Straight (1)")
-                .ToList();
+            // Get the allowedAbove list
+            List<GameObject> allowedAbove = cellGrid[x, i].possibleTiles;
+
+            // Build a string with the names of the GameObjects in the list
+            string allowedAboveNames = string.Join(", ", allowedAbove.Select(tile => tile.name));
+
+            // Log the names
+            UnityEngine.Debug.Log("Possible Tiles for cellGrid[" + x + ", " + i + "]: " + allowedAboveNames);
+
+            cellGrid[x, i].possibleTiles = cellGrid[x, i].possibleTiles
+            .Where(tile => Regex.IsMatch(tile.name, @"^Street_Straight \(1\)(\(Clone\))*$"))
+            .ToList();
 
             // Set the selected tile on the cell
             cellGrid[x, i].SetTile(cellGrid[x, i].possibleTiles.First());
@@ -623,6 +619,15 @@ public class TileGridGenerator : MonoBehaviour
             if(i + 1 < gridSize){
                 //allowedLeft
                 cellGrid[x, i + 1].possibleTiles = cellGrid[x, i].instantiatedTile.GetComponent<Tile>().allowedLeft;
+
+                // Get the allowedAbove list
+                List<GameObject> allowedAbove2 = cellGrid[x, i].instantiatedTile.GetComponent<Tile>().allowedLeft;
+
+                // Build a string with the names of the GameObjects in the list
+                string allowedAboveNames2 = string.Join(", ", allowedAbove2.Select(tile => tile.name));
+
+                // Log the names
+                UnityEngine.Debug.Log("Allowed Left Tiles for cellGrid[" + x + ", " + i + "]: " + allowedAboveNames2);
             }
             if(x + 1 < gridSize){
                 //allowedUp
