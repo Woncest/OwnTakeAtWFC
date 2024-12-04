@@ -187,10 +187,10 @@ public class TileGridGenerator : MonoBehaviour
 
             GoThroughEverything();
 
-            if (y > 0)
+            /*if (y > 0)
             {
                 break;
-            }
+            }*/
 
             for (int x = 0; x < gridSize; x++)
             {
@@ -559,13 +559,16 @@ public class TileGridGenerator : MonoBehaviour
             // Set the selected tile on the cell
             cellGrid[i, y].SetTile(cellGrid[i, y].possibleTiles.First());
 
+            // Proceed with setting neighbors and instantiating the tile
+            SetNeighboursHorizontally(i, y);
+
             // Instantiate the selected tile at the grid position
             Vector3 position = new Vector3(i, 0, y);
             Instantiate(cellGrid[i, y].possibleTiles.First(), position, Quaternion.identity);
             cellGrid[i, y].instantiatedTile = Instantiate(cellGrid[i, y].possibleTiles.First(), position, Quaternion.identity);
 
             //TODO set allowedUp and allowedLeft and allowedRight
-            if(i + 1 < gridSize){
+            /*if(i + 1 < gridSize){
                 //allowedAbove
                 cellGrid[i + 1, y].possibleTiles = cellGrid[i, y].instantiatedTile.GetComponent<Tile>().allowedAbove;
                 
@@ -577,7 +580,7 @@ public class TileGridGenerator : MonoBehaviour
             if(y - 1 >= 0){
                 //allowedRight
                 cellGrid[i, y - 1].possibleTiles = cellGrid[i, y].instantiatedTile.GetComponent<Tile>().allowedRight;
-            }
+            }*/
             GoThroughEverything();
         }
     }
@@ -611,12 +614,15 @@ public class TileGridGenerator : MonoBehaviour
             // Set the selected tile on the cell
             cellGrid[x, i].SetTile(cellGrid[x, i].possibleTiles.First());
 
+            // Proceed with setting neighbors and instantiating the tile
+            SetNeighboursHorizontally(x, i);
+
             // Instantiate the selected tile at the grid position
             Vector3 position = new Vector3(x, 0, i);
             cellGrid[x, i].instantiatedTile = Instantiate(cellGrid[x, i].possibleTiles.First(), position, Quaternion.identity);
 
             //TODO set allowedUp and allowedLeft and allowedDown
-            if(i + 1 < gridSize){
+            /*if(i + 1 < gridSize){
                 //allowedLeft
                 cellGrid[x, i + 1].possibleTiles = cellGrid[x, i].instantiatedTile.GetComponent<Tile>().allowedLeft;
 
@@ -636,7 +642,7 @@ public class TileGridGenerator : MonoBehaviour
             if(x - 1 >= 0){
                 //allowedDown
                 cellGrid[x - 1, i].possibleTiles = cellGrid[x, i].instantiatedTile.GetComponent<Tile>().allowedBelow;
-            }
+            }*/
             //TODO add that before we reset all options in cells
             GoThroughEverything();
         }
