@@ -203,6 +203,16 @@ public class TileGridGenerator : MonoBehaviour
                 // Randomly select a tile from the remaining possible tiles
                 GameObject selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
 
+                //Check if the selected Tile is acceptable for forcing the desired amount of streets
+                List<GameObject> tilesRight = selectedTilePrefab.GetComponent<Tile>().allowedAbove;
+                bool hasStreetStraight = tilesRight.Any(tile => tile.name == "Street_Straight");
+
+                if (hasStreetStraight)
+                {
+                    UnityEngine.Debug.Log("Street_Straight found in tilesRight at x:" + x + " y:" + y);
+                    // Perform desired action
+                }
+
                 // Remove the selected tile from the possibleTiles list
                 cellGrid[x, y].possibleTiles.RemoveAll(tile => tile != selectedTilePrefab);
 
@@ -540,7 +550,7 @@ public class TileGridGenerator : MonoBehaviour
 
     private void DoSomethingHorizontal(int x, int y){
         //Set the horizontal Line (currently fix 3 long) Number - 1 == the length (ex. 1 < 4 + y == 3)
-        UnityEngine.Debug.Log("Method Starts with x:" + x + " y:" + y);
+        //UnityEngine.Debug.Log("Method Starts with x:" + x + " y:" + y);
         for (int i = x + 1; i < 4 + x; i++) 
         {
             if(i >= gridSize){
@@ -597,15 +607,6 @@ public class TileGridGenerator : MonoBehaviour
             UnityEngine.Debug.LogError("Should be empty ?" + cellGrid[i, y].instantiatedTile.name);
             break;
             }
-
-            // Get the allowedAbove list
-            List<GameObject> allowedAbove = cellGrid[x, i].possibleTiles;
-
-            // Build a string with the names of the GameObjects in the list
-            string allowedAboveNames = string.Join(", ", allowedAbove.Select(tile => tile.name));
-
-            // Log the names
-            UnityEngine.Debug.Log("Possible Tiles for cellGrid[" + x + ", " + i + "]: " + allowedAboveNames);
 
             cellGrid[x, i].possibleTiles = cellGrid[x, i].possibleTiles
             .Where(tile => Regex.IsMatch(tile.name, @"^Street_Straight \(1\)(\(Clone\))*$"))
