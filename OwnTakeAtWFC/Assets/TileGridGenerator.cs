@@ -209,8 +209,13 @@ public class TileGridGenerator : MonoBehaviour
 
                 if (hasStreetStraight)
                 {
-                    UnityEngine.Debug.Log("Street_Straight found in tilesRight at x:" + x + " y:" + y);
+                    
+                    UnityEngine.Debug.Log("Street_Straight found in tilesRight at x:" + x + " y:" + y + " IsAheadClear was: " + IsAheadClear(x,y,3));
                     // Perform desired action
+                    if(!IsAheadClear(x,y,3)){
+                        UnityEngine.Debug.Log("Reroll");
+                        selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
+                    }
                 }
 
                 // Remove the selected tile from the possibleTiles list
@@ -662,5 +667,46 @@ public class TileGridGenerator : MonoBehaviour
             }
         }
     }
+
+    public bool IsAheadClear(int startX, int startY, int distance)
+    {
+        // Define the regex pattern to match "Street_Straight" with any number of "(Clone)"
+        string pattern = @"^Street_Straight(\s\(Clone\))*$";
+
+        // Loop through the next distance + 1 tiles in the x direction
+        for (int i = 1; i <= distance + 1; i++)
+        {
+            int nextX = startX + i;
+
+            // Check if the nextX exceeds the grid boundaries
+            if (nextX >= cellGrid.GetLength(0))
+            {
+                // If we are out of bounds, stop checking
+                break;
+            }
+
+            // Check the tileSet property of the current cell
+            if (cellGrid[nextX, startY].tileSet)
+            {
+                // If tileSet is true, return false
+                return false;
+            }
+
+            // Check if "Street_Straight" with any "(Clone)" suffix exists in possibleTiles
+            bool hasStreetStraight = cellGrid[nextX, startY].possibleTiles
+                .Any(tile => System.Text.RegularExpressions.Regex.IsMatch(tile.name, pattern));
+
+            if (!hasStreetStraight)
+            {
+                // If no "Street_Straight" tile is found, return false
+                return false;
+            }
+        }
+
+        // If all checks pass, return true
+        return true;
+    }
+
+
 
 }
