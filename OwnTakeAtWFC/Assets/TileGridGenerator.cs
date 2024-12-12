@@ -207,13 +207,12 @@ public class TileGridGenerator : MonoBehaviour
                 List<GameObject> tilesRight = selectedTilePrefab.GetComponent<Tile>().allowedAbove;
                 bool hasStreetStraight = tilesRight.Any(tile => tile.name == "Street_Straight");
 
-                if (hasStreetStraight && selectedTilePrefab.gameObject.name != "Street_Empty")
+                if (hasStreetStraight && selectedTilePrefab.gameObject.name != "Street_Empty" && selectedTilePrefab.gameObject.name != "Street_Straight")
                 {
                     
                     UnityEngine.Debug.Log("1 Street_Straight found in tilesRight at x:" + x + " y:" + y + " IsAheadClear was: " + IsAheadClear(x,y,3));
                     // Perform desired action
                     if(!IsAheadClear(x,y,3)){
-                        UnityEngine.Debug.Log("Reroll");
                         cellGrid[x,y].possibleTiles.Remove(selectedTilePrefab);
                         selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
 
@@ -221,11 +220,10 @@ public class TileGridGenerator : MonoBehaviour
                         tilesRight = selectedTilePrefab.GetComponent<Tile>().allowedAbove;
                         hasStreetStraight = tilesRight.Any(tile => tile.name == "Street_Straight");
 
-                        if (hasStreetStraight && selectedTilePrefab.gameObject.name != "Street_Empty"){
+                        if (hasStreetStraight && selectedTilePrefab.gameObject.name != "Street_Empty" && selectedTilePrefab.gameObject.name != "Street_Straight"){
                             UnityEngine.Debug.Log("2 Street_Straight found in tilesRight at x:" + x + " y:" + y + " IsAheadClear was: " + IsAheadClear(x,y,3));
                             // Perform desired action
                             if(!IsAheadClear(x,y,3)){
-                                UnityEngine.Debug.Log("Reroll");
                                 cellGrid[x,y].possibleTiles.Remove(selectedTilePrefab);
                                 selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
 
@@ -233,7 +231,7 @@ public class TileGridGenerator : MonoBehaviour
                                 tilesRight = selectedTilePrefab.GetComponent<Tile>().allowedAbove;
                                 hasStreetStraight = tilesRight.Any(tile => tile.name == "Street_Straight");
 
-                                if (hasStreetStraight && selectedTilePrefab.gameObject.name != "Street_Empty"){
+                                if (hasStreetStraight && selectedTilePrefab.gameObject.name != "Street_Empty" && selectedTilePrefab.gameObject.name != "Street_Straight"){
                                     UnityEngine.Debug.Log("3 Street_Straight found in tilesRight at x:" + x + " y:" + y + " IsAheadClear was: " + IsAheadClear(x,y,3));
                                 }
                             }
@@ -256,12 +254,14 @@ public class TileGridGenerator : MonoBehaviour
 
                 //TODO only do stuff when you are setting a non straig street or empty tile
 
-                if (selectedTilePrefab.GetComponent<Tile>().allowedAbove.Any(tile => tile.name == "Street_Straight"))
+                if (selectedTilePrefab.GetComponent<Tile>().allowedAbove.Any(tile => tile.name == "Street_Straight") 
+                && selectedTilePrefab.gameObject.name != "Street_Straight")
                 {
                     DoSomethingHorizontal(x, y);
                 }
 
-                if (selectedTilePrefab.GetComponent<Tile>().allowedLeft.Any(tile => tile.name == "Street_Straight (1)"))
+                if (selectedTilePrefab.GetComponent<Tile>().allowedLeft.Any(tile => tile.name == "Street_Straight (1)")
+                && selectedTilePrefab.gameObject.name != "Street_Straight (1)")
                 {
                     DoSomethingVertical(x, y);
                 }
