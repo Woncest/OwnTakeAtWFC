@@ -210,21 +210,33 @@ public class TileGridGenerator : MonoBehaviour
                 if (hasStreetStraight && selectedTilePrefab.gameObject.name != "Street_Empty")
                 {
                     
-                    UnityEngine.Debug.Log("Street_Straight found in tilesRight at x:" + x + " y:" + y + " IsAheadClear was: " + IsAheadClear(x,y,3));
+                    UnityEngine.Debug.Log("1 Street_Straight found in tilesRight at x:" + x + " y:" + y + " IsAheadClear was: " + IsAheadClear(x,y,3));
                     // Perform desired action
-                    if(!IsAheadClear(x,y,3) && selectedTilePrefab.gameObject.name != "Street_Empty"){
+                    if(!IsAheadClear(x,y,3)){
                         UnityEngine.Debug.Log("Reroll");
                         cellGrid[x,y].possibleTiles.Remove(selectedTilePrefab);
                         selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
-                            if(!IsAheadClear(x,y,3) && selectedTilePrefab.gameObject.name != "Street_Empty"){
+
+                        //Check if the selected Tile is acceptable for forcing the desired amount of streets
+                        tilesRight = selectedTilePrefab.GetComponent<Tile>().allowedAbove;
+                        hasStreetStraight = tilesRight.Any(tile => tile.name == "Street_Straight");
+
+                        if (hasStreetStraight && selectedTilePrefab.gameObject.name != "Street_Empty"){
+                            UnityEngine.Debug.Log("2 Street_Straight found in tilesRight at x:" + x + " y:" + y + " IsAheadClear was: " + IsAheadClear(x,y,3));
+                            // Perform desired action
+                            if(!IsAheadClear(x,y,3)){
                                 UnityEngine.Debug.Log("Reroll");
                                 cellGrid[x,y].possibleTiles.Remove(selectedTilePrefab);
                                 selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
-                                if(!IsAheadClear(x,y,3) && selectedTilePrefab.gameObject.name != "Street_Empty"){
-                                    UnityEngine.Debug.Log("Reroll");
-                                    cellGrid[x,y].possibleTiles.Remove(selectedTilePrefab);
-                                    selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
+
+                                //Check if the selected Tile is acceptable for forcing the desired amount of streets
+                                tilesRight = selectedTilePrefab.GetComponent<Tile>().allowedAbove;
+                                hasStreetStraight = tilesRight.Any(tile => tile.name == "Street_Straight");
+
+                                if (hasStreetStraight && selectedTilePrefab.gameObject.name != "Street_Empty"){
+                                    UnityEngine.Debug.Log("3 Street_Straight found in tilesRight at x:" + x + " y:" + y + " IsAheadClear was: " + IsAheadClear(x,y,3));
                                 }
+                            }
                         }
                     }
                 }
