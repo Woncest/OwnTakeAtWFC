@@ -18,6 +18,8 @@ public class TileGridGenerator : MonoBehaviour
 
     private Cell[,] cellGrid;
 
+    private int streetLength = 1;
+
     void Start()
     {
         InitializeCellGrid();
@@ -204,13 +206,13 @@ public class TileGridGenerator : MonoBehaviour
                 GameObject selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
 
                 //Check if the selected Tile is acceptable for forcing the desired amount of streets
-                List<GameObject> tilesRight = selectedTilePrefab.GetComponent<Tile>().allowedAbove;
+                /*List<GameObject> tilesRight = selectedTilePrefab.GetComponent<Tile>().allowedAbove;
                 bool hasStreetStraight = tilesRight.Any(tile => tile.name == "Street_Straight");
 
                 if (hasStreetStraight && selectedTilePrefab.gameObject.name != "Street_Empty" && selectedTilePrefab.gameObject.name != "Street_Straight")
                 {
                     
-                    UnityEngine.Debug.Log("1 Street_Straight found in tilesRight at x:" + x + " y:" + y + " IsAheadClear was: " + IsAheadClear(x,y,3));
+                    UnityEngine.Debug.Log("1 Street_Straight found in tilesRight at x:" + x + " y:" + y + " IsAheadClear was: " + IsAheadClear(x,y,streetLength));
                     // Perform desired action
                     if(!IsAheadClear(x,y,3)){
                         cellGrid[x,y].possibleTiles.Remove(selectedTilePrefab);
@@ -221,7 +223,7 @@ public class TileGridGenerator : MonoBehaviour
                         hasStreetStraight = tilesRight.Any(tile => tile.name == "Street_Straight");
 
                         if (hasStreetStraight && selectedTilePrefab.gameObject.name != "Street_Empty" && selectedTilePrefab.gameObject.name != "Street_Straight"){
-                            UnityEngine.Debug.Log("2 Street_Straight found in tilesRight at x:" + x + " y:" + y + " IsAheadClear was: " + IsAheadClear(x,y,3));
+                            UnityEngine.Debug.Log("2 Street_Straight found in tilesRight at x:" + x + " y:" + y + " IsAheadClear was: " + IsAheadClear(x,y,streetLength));
                             // Perform desired action
                             if(!IsAheadClear(x,y,3)){
                                 cellGrid[x,y].possibleTiles.Remove(selectedTilePrefab);
@@ -232,12 +234,12 @@ public class TileGridGenerator : MonoBehaviour
                                 hasStreetStraight = tilesRight.Any(tile => tile.name == "Street_Straight");
 
                                 if (hasStreetStraight && selectedTilePrefab.gameObject.name != "Street_Empty" && selectedTilePrefab.gameObject.name != "Street_Straight"){
-                                    UnityEngine.Debug.Log("3 Street_Straight found in tilesRight at x:" + x + " y:" + y + " IsAheadClear was: " + IsAheadClear(x,y,3));
+                                    UnityEngine.Debug.Log("3 Street_Straight found in tilesRight at x:" + x + " y:" + y + " IsAheadClear was: " + IsAheadClear(x,y,streetLength));
                                 }
                             }
                         }
                     }
-                }
+                }*/
 
                 // Remove the selected tile from the possibleTiles list
                 cellGrid[x, y].possibleTiles.RemoveAll(tile => tile != selectedTilePrefab);
@@ -254,7 +256,7 @@ public class TileGridGenerator : MonoBehaviour
 
                 //TODO only do stuff when you are setting a non straig street or empty tile
 
-                if (selectedTilePrefab.GetComponent<Tile>().allowedAbove.Any(tile => tile.name == "Street_Straight") 
+                /*if (selectedTilePrefab.GetComponent<Tile>().allowedAbove.Any(tile => tile.name == "Street_Straight") 
                 && selectedTilePrefab.gameObject.name != "Street_Straight")
                 {
                     DoSomethingHorizontal(x, y);
@@ -264,7 +266,7 @@ public class TileGridGenerator : MonoBehaviour
                 && selectedTilePrefab.gameObject.name != "Street_Straight (1)")
                 {
                     DoSomethingVertical(x, y);
-                }
+                }*/
 
                 /*if(selectedTilePrefab.gameObject.name == "Street_Straight"){
                     DoSomethingHorizontal(x, y);
@@ -579,7 +581,7 @@ public class TileGridGenerator : MonoBehaviour
     private void DoSomethingHorizontal(int x, int y){
         //Set the horizontal Line (currently fix 3 long) Number - 1 == the length (ex. 1 < 4 + y == 3)
         //UnityEngine.Debug.Log("Method Starts with x:" + x + " y:" + y);
-        for (int i = x + 1; i < 4 + x; i++) 
+        for (int i = x + 1; i < streetLength + 1 + x; i++) 
         {
             if(i >= gridSize){
                 break;
@@ -625,7 +627,7 @@ public class TileGridGenerator : MonoBehaviour
 
     private void DoSomethingVertical(int x, int y){
         //Set the vertical Line (currently fix 3 long) Number - 1 == the length (ex. 1 < 4 + y == 3)
-        for (int i = y + 1; i < 4 + y; i++) 
+        for (int i = y + 1; i < streetLength + 1 + y; i++) 
         {
             if(i >= gridSize){
                 break;
