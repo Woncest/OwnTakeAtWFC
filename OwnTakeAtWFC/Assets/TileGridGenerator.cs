@@ -18,7 +18,7 @@ public class TileGridGenerator : MonoBehaviour
 
     private Cell[,] cellGrid;
 
-    private int streetLength = 2;
+    private int streetLength = 1;
 
     void Start()
     {
