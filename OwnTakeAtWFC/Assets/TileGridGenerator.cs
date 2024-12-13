@@ -18,7 +18,7 @@ public class TileGridGenerator : MonoBehaviour
 
     private Cell[,] cellGrid;
 
-    private int streetLength = 1;
+    private int streetLength = 2;
 
     void Start()
     {
@@ -256,7 +256,7 @@ public class TileGridGenerator : MonoBehaviour
 
                 //TODO only do stuff when you are setting a non straig street or empty tile
 
-                /*if (selectedTilePrefab.GetComponent<Tile>().allowedAbove.Any(tile => tile.name == "Street_Straight") 
+                if (selectedTilePrefab.GetComponent<Tile>().allowedAbove.Any(tile => tile.name == "Street_Straight") 
                 && selectedTilePrefab.gameObject.name != "Street_Straight")
                 {
                     DoSomethingHorizontal(x, y);
@@ -266,19 +266,7 @@ public class TileGridGenerator : MonoBehaviour
                 && selectedTilePrefab.gameObject.name != "Street_Straight (1)")
                 {
                     DoSomethingVertical(x, y);
-                }*/
-
-                /*if(selectedTilePrefab.gameObject.name == "Street_Straight"){
-                    DoSomethingHorizontal(x, y);
-                    UnityEngine.Debug.Log("Do Something Horizontal");
-                    break;
                 }
-
-                if(selectedTilePrefab.gameObject.name == "Street_Straight (1)"){
-                    DoSomethingVertical(x, y);
-                    UnityEngine.Debug.Log("Do Something Vertical");
-                    break;
-                }*/
             }
         }
     }
