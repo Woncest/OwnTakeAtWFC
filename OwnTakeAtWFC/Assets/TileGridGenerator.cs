@@ -592,7 +592,6 @@ public class TileGridGenerator : MonoBehaviour
 
             // Instantiate the selected tile at the grid position
             Vector3 position = new Vector3(i, 0, y);
-            Instantiate(cellGrid[i, y].possibleTiles.First(), position, Quaternion.identity);
             cellGrid[i, y].instantiatedTile = Instantiate(cellGrid[i, y].possibleTiles.First(), position, Quaternion.identity);
 
             //TODO set allowedUp and allowedLeft and allowedRight
