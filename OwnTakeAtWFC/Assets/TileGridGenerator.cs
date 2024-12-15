@@ -211,10 +211,9 @@ public class TileGridGenerator : MonoBehaviour
 
                 if (hasStreetStraight && selectedTilePrefab.gameObject.name != "Street_Empty" && selectedTilePrefab.gameObject.name != "Street_Straight")
                 {
-                    
-                    //UnityEngine.Debug.Log("1 Street_Straight found in tilesRight at x:" + x + " y:" + y + " IsAheadClear was: " + IsAheadClear(x,y,streetLength));
                     // Perform desired action
                     if(!IsAheadClear(x,y,streetLength)){
+                        UnityEngine.Debug.Log("1 Reroll");
                         cellGrid[x,y].possibleTiles.Remove(selectedTilePrefab);
                         selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
 
@@ -223,9 +222,9 @@ public class TileGridGenerator : MonoBehaviour
                         hasStreetStraight = tilesRight.Any(tile => tile.name == "Street_Straight");
 
                         if (hasStreetStraight && selectedTilePrefab.gameObject.name != "Street_Empty" && selectedTilePrefab.gameObject.name != "Street_Straight"){
-                            UnityEngine.Debug.Log("2 Street_Straight found in tilesRight at x:" + x + " y:" + y + " IsAheadClear was: " + IsAheadClear(x,y,streetLength));
                             // Perform desired action
                             if(!IsAheadClear(x,y,streetLength)){
+                                UnityEngine.Debug.Log("2 Reroll");
                                 cellGrid[x,y].possibleTiles.Remove(selectedTilePrefab);
                                 selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
 
@@ -234,7 +233,7 @@ public class TileGridGenerator : MonoBehaviour
                                 hasStreetStraight = tilesRight.Any(tile => tile.name == "Street_Straight");
 
                                 if (hasStreetStraight && selectedTilePrefab.gameObject.name != "Street_Empty" && selectedTilePrefab.gameObject.name != "Street_Straight"){
-                                    UnityEngine.Debug.Log("3 Street_Straight found in tilesRight at x:" + x + " y:" + y + " IsAheadClear was: " + IsAheadClear(x,y,streetLength));
+                                    UnityEngine.Debug.Log("3 Ran Through everything before, but apperantly worked if not the last message");
                                 }
                             }
                         }
