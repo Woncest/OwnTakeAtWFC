@@ -18,7 +18,7 @@ public class TileGridGenerator : MonoBehaviour
 
     private Cell[,] cellGrid;
 
-    private int streetLength = 1;
+    private int streetLength = 2;
 
     void Start()
     {
@@ -206,15 +206,15 @@ public class TileGridGenerator : MonoBehaviour
                 GameObject selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
 
                 //Check if the selected Tile is acceptable for forcing the desired amount of streets
-                /*List<GameObject> tilesRight = selectedTilePrefab.GetComponent<Tile>().allowedAbove;
+                List<GameObject> tilesRight = selectedTilePrefab.GetComponent<Tile>().allowedAbove;
                 bool hasStreetStraight = tilesRight.Any(tile => tile.name == "Street_Straight");
 
                 if (hasStreetStraight && selectedTilePrefab.gameObject.name != "Street_Empty" && selectedTilePrefab.gameObject.name != "Street_Straight")
                 {
                     
-                    UnityEngine.Debug.Log("1 Street_Straight found in tilesRight at x:" + x + " y:" + y + " IsAheadClear was: " + IsAheadClear(x,y,streetLength));
+                    //UnityEngine.Debug.Log("1 Street_Straight found in tilesRight at x:" + x + " y:" + y + " IsAheadClear was: " + IsAheadClear(x,y,streetLength));
                     // Perform desired action
-                    if(!IsAheadClear(x,y,3)){
+                    if(!IsAheadClear(x,y,streetLength)){
                         cellGrid[x,y].possibleTiles.Remove(selectedTilePrefab);
                         selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
 
@@ -225,7 +225,7 @@ public class TileGridGenerator : MonoBehaviour
                         if (hasStreetStraight && selectedTilePrefab.gameObject.name != "Street_Empty" && selectedTilePrefab.gameObject.name != "Street_Straight"){
                             UnityEngine.Debug.Log("2 Street_Straight found in tilesRight at x:" + x + " y:" + y + " IsAheadClear was: " + IsAheadClear(x,y,streetLength));
                             // Perform desired action
-                            if(!IsAheadClear(x,y,3)){
+                            if(!IsAheadClear(x,y,streetLength)){
                                 cellGrid[x,y].possibleTiles.Remove(selectedTilePrefab);
                                 selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
 
@@ -239,7 +239,7 @@ public class TileGridGenerator : MonoBehaviour
                             }
                         }
                     }
-                }*/
+                }
 
                 // Remove the selected tile from the possibleTiles list
                 cellGrid[x, y].possibleTiles.RemoveAll(tile => tile != selectedTilePrefab);
@@ -708,7 +708,7 @@ public class TileGridGenerator : MonoBehaviour
             bool hasStreetStraight = cellGrid[nextX, startY].possibleTiles
                 .Any(tile => System.Text.RegularExpressions.Regex.IsMatch(tile.name, pattern));
 
-            if (!hasStreetStraight)
+            if (!hasStreetStraight && i <= distance)
             {
                 // If no "Street_Straight" tile is found, return false
                 return false;
