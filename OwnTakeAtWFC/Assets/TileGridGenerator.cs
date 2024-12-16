@@ -86,7 +86,8 @@ public class TileGridGenerator : MonoBehaviour
         }
         else
         {
-            GenerateGridGoThroughEverything();  // Generate the grid normally
+            //GenerateGridGoThroughEverything();  // Generate the grid normally
+            GenerateGridLeastEntropy();
         }
 
         stopwatch.Stop();  // Stop timing
@@ -313,6 +314,7 @@ public class TileGridGenerator : MonoBehaviour
 
             // Remove this cell from the unprocessed list as it's now set
             unprocessedCells.RemoveAt(0);
+            GoThroughEverything();
         }
     }
 #endregion
