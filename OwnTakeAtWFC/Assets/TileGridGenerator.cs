@@ -300,6 +300,33 @@ public class TileGridGenerator : MonoBehaviour
 
             // Randomly select a tile from the remaining possible tiles
             GameObject selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
+
+            //Check if the selected Tile is acceptable for forcing the desired amount of streets
+            List<GameObject> tilesRight = selectedTilePrefab.GetComponent<Tile>().allowedAbove;
+            bool hasStreetStraight = tilesRight.Any(tile => tile.name == "Street_Straight");
+
+            //Go into the loop if necessary to loop until fitting tile is found
+            //TODO also look in the other directions as every direction is now relevant
+            if (hasStreetStraight && !IsAheadClear(x,y,streetLength) &&
+            selectedTilePrefab.gameObject.name != "Street_Empty" && selectedTilePrefab.gameObject.name != "Street_Straight"){
+                while(true){
+                    cellGrid[x,y].possibleTiles.Remove(selectedTilePrefab);
+                    if(cellGrid[x,y].possibleTiles.Count == 0) break;
+                    selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
+
+                    //Check if the selected Tile is acceptable for forcing the desired amount of streets
+                    tilesRight = selectedTilePrefab.GetComponent<Tile>().allowedAbove;
+                    hasStreetStraight = tilesRight.Any(tile => tile.name == "Street_Straight");
+
+                    if (hasStreetStraight && !IsAheadClear(x,y,streetLength) &&
+                    selectedTilePrefab.gameObject.name != "Street_Empty" && selectedTilePrefab.gameObject.name != "Street_Straight"){
+                        continue;
+                    }else{
+                        break;
+                    }
+                }
+            }
+
             cellGrid[x, y].possibleTiles.RemoveAll(tile => tile != selectedTilePrefab);
 
             // Set the selected tile on the cell
