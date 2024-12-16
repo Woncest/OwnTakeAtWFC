@@ -209,33 +209,23 @@ public class TileGridGenerator : MonoBehaviour
                 List<GameObject> tilesRight = selectedTilePrefab.GetComponent<Tile>().allowedAbove;
                 bool hasStreetStraight = tilesRight.Any(tile => tile.name == "Street_Straight");
 
-                if (hasStreetStraight && selectedTilePrefab.gameObject.name != "Street_Empty" && selectedTilePrefab.gameObject.name != "Street_Straight")
-                {
-                    // Perform desired action
-                    if(!IsAheadClear(x,y,streetLength)){
-                        UnityEngine.Debug.Log("1 Reroll");
+                //Go into the loop if necessary to loop until fitting tile is found
+                if (hasStreetStraight && !IsAheadClear(x,y,streetLength) &&
+                selectedTilePrefab.gameObject.name != "Street_Empty" && selectedTilePrefab.gameObject.name != "Street_Straight"){
+                    while(true){
                         cellGrid[x,y].possibleTiles.Remove(selectedTilePrefab);
+                        if(cellGrid[x,y].possibleTiles.Count == 0) break;
                         selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
 
                         //Check if the selected Tile is acceptable for forcing the desired amount of streets
                         tilesRight = selectedTilePrefab.GetComponent<Tile>().allowedAbove;
                         hasStreetStraight = tilesRight.Any(tile => tile.name == "Street_Straight");
 
-                        if (hasStreetStraight && selectedTilePrefab.gameObject.name != "Street_Empty" && selectedTilePrefab.gameObject.name != "Street_Straight"){
-                            // Perform desired action
-                            if(!IsAheadClear(x,y,streetLength)){
-                                UnityEngine.Debug.Log("2 Reroll");
-                                cellGrid[x,y].possibleTiles.Remove(selectedTilePrefab);
-                                selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
-
-                                //Check if the selected Tile is acceptable for forcing the desired amount of streets
-                                tilesRight = selectedTilePrefab.GetComponent<Tile>().allowedAbove;
-                                hasStreetStraight = tilesRight.Any(tile => tile.name == "Street_Straight");
-
-                                if (hasStreetStraight && selectedTilePrefab.gameObject.name != "Street_Empty" && selectedTilePrefab.gameObject.name != "Street_Straight"){
-                                    UnityEngine.Debug.Log("3 Ran Through everything before, but apperantly worked if not the last message");
-                                }
-                            }
+                        if (hasStreetStraight && !IsAheadClear(x,y,streetLength) &&
+                        selectedTilePrefab.gameObject.name != "Street_Empty" && selectedTilePrefab.gameObject.name != "Street_Straight"){
+                            continue;
+                        }else{
+                            break;
                         }
                     }
                 }
