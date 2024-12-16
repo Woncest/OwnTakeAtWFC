@@ -332,12 +332,25 @@ public class TileGridGenerator : MonoBehaviour
             // Set the selected tile on the cell
             cellGrid[x, y].SetTile(selectedTilePrefab);
 
+            // Set neighbors after placing the tile
+            SetNeighboursHorizontally(x, y);
+
             // Instantiate the selected tile at the grid position
             Vector3 position = new Vector3(x, 0, y);
             cellGrid[x, y].instantiatedTile = Instantiate(selectedTilePrefab, position, Quaternion.identity);
 
-            // Set neighbors after placing the tile
-            SetNeighboursHorizontally(x, y);
+            //TODO also integrate IsAheadClear() because it assumes it is always clear ahead
+            if (selectedTilePrefab.GetComponent<Tile>().allowedAbove.Any(tile => tile.name == "Street_Straight") 
+                && selectedTilePrefab.gameObject.name != "Street_Straight")
+                {
+                    DoSomethingHorizontal(x, y);
+                }
+
+                if (selectedTilePrefab.GetComponent<Tile>().allowedLeft.Any(tile => tile.name == "Street_Straight (1)")
+                && selectedTilePrefab.gameObject.name != "Street_Straight (1)")
+                {
+                    DoSomethingVertical(x, y);
+                }
 
             // Remove this cell from the unprocessed list as it's now set
             unprocessedCells.RemoveAt(0);
