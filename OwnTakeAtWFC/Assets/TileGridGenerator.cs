@@ -292,7 +292,7 @@ public class TileGridGenerator : MonoBehaviour
             int y = cellPosition.y;
 
             // If there are no possible tiles, skip this cell (this case shouldn't happen unless all options are eliminated)
-            if (cellGrid[x, y].possibleTiles.Count == 0)
+            if (cellGrid[x, y].possibleTiles.Count == 0 || cellGrid[x,y].tileSet)
             {
                 unprocessedCells.RemoveAt(0);
                 continue;
@@ -342,13 +342,13 @@ public class TileGridGenerator : MonoBehaviour
             cellGrid[x, y].instantiatedTile = Instantiate(selectedTilePrefab, position, Quaternion.identity);
 
             //TODO also integrate IsAheadClear() because it assumes it is always clear ahead
-            /*if (selectedTilePrefab.GetComponent<Tile>().allowedAbove.Any(tile => tile.name == "Street_Straight") 
+            if (selectedTilePrefab.GetComponent<Tile>().allowedAbove.Any(tile => tile.name == "Street_Straight") 
             && selectedTilePrefab.gameObject.name != "Street_Straight")
             {
                 DoSomethingHorizontal(x, y);
             }
 
-            if (selectedTilePrefab.GetComponent<Tile>().allowedLeft.Any(tile => tile.name == "Street_Straight (1)")
+            /*if (selectedTilePrefab.GetComponent<Tile>().allowedLeft.Any(tile => tile.name == "Street_Straight (1)")
             && selectedTilePrefab.gameObject.name != "Street_Straight (1)")
             {
                 DoSomethingVertical(x, y);
