@@ -4,6 +4,8 @@ using UnityEngine;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Security.Cryptography.X509Certificates;
+using System.IO;
 
 public class TileGridGenerator : MonoBehaviour
 {
@@ -86,8 +88,8 @@ public class TileGridGenerator : MonoBehaviour
         }
         else
         {
-            //GenerateGridGoThroughEverything();  // Generate the grid normally
-            GenerateGridLeastEntropy();
+            GenerateGridGoThroughEverything();  // Generate the grid normally
+            //GenerateGridLeastEntropy();
         }
 
         stopwatch.Stop();  // Stop timing
@@ -210,12 +212,33 @@ public class TileGridGenerator : MonoBehaviour
                 List<GameObject> tilesRight = selectedTilePrefab.GetComponent<Tile>().allowedAbove;
                 bool hasStreetStraight = tilesRight.Any(tile => tile.name == "Street_Straight");
 
+                //Removes Curves/Threeways and Intersections if ahead is not clear for the length which the road has to be
+                /*if(hasStreetStraight && !IsAheadClear(x,y,streetLength) &&
+                selectedTilePrefab.gameObject.name != "Street_Empty" && selectedTilePrefab.gameObject.name != "Street_Straight"){
+                    if (!IsAheadClear(x, y, streetLength))
+                        {
+                            // Filter the possibleTiles list to remove tiles that have "Street_Straight" in allowedAbove
+                            cellGrid[x, y].possibleTiles = cellGrid[x, y].possibleTiles
+                                .Where(tilePrefab =>
+                                {
+                                    // Access the Tile component
+                                    Tile tileComponent = tilePrefab.GetComponent<Tile>();
+                                    
+                                    // Check if allowedAbove contains any GameObject with the name "Street_Straight"
+                                    return tileComponent.allowedAbove.All(allowedTile => allowedTile.name != "Street_Straight");
+                                })
+                                .ToList();
+                        }
+                        cellGrid[x,y].possibleTiles.Remove(selectedTilePrefab);
+                        selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
+                }*/
+
                 //Go into the loop if necessary to loop until fitting tile is found
                 if (hasStreetStraight && !IsAheadClear(x,y,streetLength) &&
                 selectedTilePrefab.gameObject.name != "Street_Empty" && selectedTilePrefab.gameObject.name != "Street_Straight"){
                     while(true){
+                        if(cellGrid[x,y].possibleTiles.Count == 1) break;
                         cellGrid[x,y].possibleTiles.Remove(selectedTilePrefab);
-                        if(cellGrid[x,y].possibleTiles.Count == 0) break;
                         selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
 
                         //Check if the selected Tile is acceptable for forcing the desired amount of streets
@@ -312,8 +335,9 @@ public class TileGridGenerator : MonoBehaviour
             && selectedTilePrefab.gameObject.name != "Street_Straight"
             && selectedTilePrefab.gameObject.name != "Street_Straight (1)"){
                 while(true){
-                    if(cellGrid[x,y].possibleTiles.Count == 1) break;
+                    //if(cellGrid[x,y].possibleTiles.Count == 1) break;
                     cellGrid[x,y].possibleTiles.Remove(selectedTilePrefab);
+                    if(cellGrid[x,y].possibleTiles.Count == 0) break;
                     selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
 
                     //Check if the selected Tile is acceptable for forcing the desired amount of streets
@@ -321,12 +345,20 @@ public class TileGridGenerator : MonoBehaviour
                     hasStreetStraight = tilesRight.Any(tile => tile.name == "Street_Straight");
 
                     if (hasStreetStraight && !IsAheadClear(x,y,streetLength) &&
-                    selectedTilePrefab.gameObject.name != "Street_Empty" && selectedTilePrefab.gameObject.name != "Street_Straight"){
+                    selectedTilePrefab.gameObject.name != "Street_Empty"
+                    && selectedTilePrefab.gameObject.name != "Street_Straight"
+                    && selectedTilePrefab.gameObject.name != "Street_Straight (1)"){
                         continue;
                     }else{
                         break;
                     }
                 }
+            }
+
+            if (cellGrid[x, y].possibleTiles.Count == 0)
+            {
+                unprocessedCells.RemoveAt(0);
+                continue;
             }
 
             cellGrid[x, y].possibleTiles.RemoveAll(tile => tile != selectedTilePrefab);
@@ -716,7 +748,7 @@ public class TileGridGenerator : MonoBehaviour
     public bool IsAheadClear(int startX, int startY, int distance)
     {
         // Define the regex pattern to match "Street_Straight" with any number of "(Clone)"
-        string pattern = @"^Street_Straight(\s\(Clone\))*$";
+        string pattern = @"^Street_Straight(\(Clone\))*$";
 
         // Loop through the next distance + 1 tiles in the x direction
         for (int i = 1; i <= distance + 1; i++)
@@ -731,15 +763,18 @@ public class TileGridGenerator : MonoBehaviour
             }
 
             // Check the tileSet property of the current cell
-            if (cellGrid[nextX, startY].tileSet)
+            bool regexBool = false;
+            if(cellGrid[nextX, startY].instantiatedTile != null) regexBool = Regex.IsMatch(cellGrid[nextX, startY].instantiatedTile.gameObject.name, @"^Street_Straight(\(Clone\))*$");
+            if (cellGrid[nextX, startY].tileSet && !regexBool)
             {
-                // If tileSet is true, return false
+                // If tileSet is true and the tile is NOT "Street_Straight" with or without (Clone), return false
+                UnityEngine.Debug.Log("FUCK OFF " + cellGrid[nextX, startY].instantiatedTile.gameObject.name + " " + regexBool);
                 return false;
             }
 
             // Check if "Street_Straight" with any "(Clone)" suffix exists in possibleTiles
             bool hasStreetStraight = cellGrid[nextX, startY].possibleTiles
-                .Any(tile => System.Text.RegularExpressions.Regex.IsMatch(tile.name, pattern));
+                .Any(tile => Regex.IsMatch(tile.name, pattern));
 
             if (!hasStreetStraight && i <= distance)
             {
