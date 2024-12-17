@@ -308,10 +308,12 @@ public class TileGridGenerator : MonoBehaviour
             //Go into the loop if necessary to loop until fitting tile is found
             //TODO also look in the other directions as every direction is now relevant
             if (hasStreetStraight && !IsAheadClear(x,y,streetLength) &&
-            selectedTilePrefab.gameObject.name != "Street_Empty" && selectedTilePrefab.gameObject.name != "Street_Straight"){
+            selectedTilePrefab.gameObject.name != "Street_Empty" 
+            && selectedTilePrefab.gameObject.name != "Street_Straight"
+            && selectedTilePrefab.gameObject.name != "Street_Straight (1)"){
                 while(true){
+                    if(cellGrid[x,y].possibleTiles.Count == 1) break;
                     cellGrid[x,y].possibleTiles.Remove(selectedTilePrefab);
-                    if(cellGrid[x,y].possibleTiles.Count == 0) break;
                     selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
 
                     //Check if the selected Tile is acceptable for forcing the desired amount of streets
@@ -340,17 +342,17 @@ public class TileGridGenerator : MonoBehaviour
             cellGrid[x, y].instantiatedTile = Instantiate(selectedTilePrefab, position, Quaternion.identity);
 
             //TODO also integrate IsAheadClear() because it assumes it is always clear ahead
-            if (selectedTilePrefab.GetComponent<Tile>().allowedAbove.Any(tile => tile.name == "Street_Straight") 
-                && selectedTilePrefab.gameObject.name != "Street_Straight")
-                {
-                    DoSomethingHorizontal(x, y);
-                }
+            /*if (selectedTilePrefab.GetComponent<Tile>().allowedAbove.Any(tile => tile.name == "Street_Straight") 
+            && selectedTilePrefab.gameObject.name != "Street_Straight")
+            {
+                DoSomethingHorizontal(x, y);
+            }
 
-                if (selectedTilePrefab.GetComponent<Tile>().allowedLeft.Any(tile => tile.name == "Street_Straight (1)")
-                && selectedTilePrefab.gameObject.name != "Street_Straight (1)")
-                {
-                    DoSomethingVertical(x, y);
-                }
+            if (selectedTilePrefab.GetComponent<Tile>().allowedLeft.Any(tile => tile.name == "Street_Straight (1)")
+            && selectedTilePrefab.gameObject.name != "Street_Straight (1)")
+            {
+                DoSomethingVertical(x, y);
+            }*/
 
             // Remove this cell from the unprocessed list as it's now set
             unprocessedCells.RemoveAt(0);
