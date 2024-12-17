@@ -234,6 +234,8 @@ public class TileGridGenerator : MonoBehaviour
                 }*/
 
                 //TODO fix the OVERCOOKED
+                //TODO think if looking one back even makes sense 
+                //TODO maybe make an exception if Street_Straigh is involved, in which manne makes sense ?!?
                 /*if(x > 0){
                     if(!IsAheadClear(x,y,streetLength) && cellGrid[x - 1,y].instantiatedTile.gameObject.name != "Street_Straight"){
                         // Filter the possibleTiles list to remove tiles that have "Street_Straight" in allowedAbove
