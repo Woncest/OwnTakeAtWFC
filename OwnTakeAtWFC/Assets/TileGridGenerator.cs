@@ -233,6 +233,43 @@ public class TileGridGenerator : MonoBehaviour
                         selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
                 }*/
 
+                //TODO fix the OVERCOOKED
+                /*if(x > 0){
+                    if(!IsAheadClear(x,y,streetLength) && cellGrid[x - 1,y].instantiatedTile.gameObject.name != "Street_Straight"){
+                        // Filter the possibleTiles list to remove tiles that have "Street_Straight" in allowedAbove
+                        cellGrid[x, y].possibleTiles = cellGrid[x, y].possibleTiles
+                            .Where(tilePrefab =>
+                            {
+                                // Access the Tile component
+                                Tile tileComponent = tilePrefab.GetComponent<Tile>();
+                                        
+                                // Check if allowedAbove contains any GameObject with the name "Street_Straight"
+                                return tileComponent.allowedAbove.All(allowedTile => allowedTile.name != "Street_Straight");
+                            })
+                            .ToList();
+                        selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
+                    }else{
+                        selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
+                    }
+                }else{
+                    if(!IsAheadClear(x,y,streetLength)){
+                        // Filter the possibleTiles list to remove tiles that have "Street_Straight" in allowedAbove
+                        cellGrid[x, y].possibleTiles = cellGrid[x, y].possibleTiles
+                            .Where(tilePrefab =>
+                            {
+                                // Access the Tile component
+                                Tile tileComponent = tilePrefab.GetComponent<Tile>();
+                                        
+                                // Check if allowedAbove contains any GameObject with the name "Street_Straight"
+                                return tileComponent.allowedAbove.All(allowedTile => allowedTile.name != "Street_Straight");
+                            })
+                            .ToList();
+                        selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
+                    }else{
+                        selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
+                    }
+                }*/
+
                 //Go into the loop if necessary to loop until fitting tile is found
                 if (hasStreetStraight && !IsAheadClear(x,y,streetLength) &&
                 selectedTilePrefab.gameObject.name != "Street_Empty" && selectedTilePrefab.gameObject.name != "Street_Straight"){
