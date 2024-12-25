@@ -208,6 +208,19 @@ public class TileGridGenerator : MonoBehaviour
                 // Randomly select a tile from the remaining possible tiles
                 GameObject selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
 
+                //More than rerolling 2 time affect the structure majorly, with 2 times it also affects it but less, 2 resulst in almost no loops that are not connected
+                if (selectedTilePrefab.name.Contains("Curve"))
+                {
+                    // If it was a curve reselect a tile
+                    selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
+                }
+
+                if (selectedTilePrefab.name.Contains("Curve"))
+                {
+                    // If it was a curve reselect a tile
+                    selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
+                }
+
                 //Check if the selected Tile is acceptable for forcing the desired amount of streets
                 List<GameObject> tilesRight = selectedTilePrefab.GetComponent<Tile>().allowedAbove;
                 bool hasStreetStraight = tilesRight.Any(tile => tile.name == "Street_Straight");
