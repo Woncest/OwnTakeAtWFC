@@ -902,36 +902,45 @@ public class TileGridGenerator : MonoBehaviour
         //If you encounter a not set tile break
 
         GameObject currentTile = tile;
+        Direction direction = Direction.None;
 
         //Check for above
-        if (currentTile.GetComponent<Tile>().allowedLeft.Any(go => Regex.IsMatch(go.name, @"^Street_Straight \(1\)(\s\(Clone\))*$")))
+        if (currentTile.GetComponent<Tile>().allowedLeft.Any(go => Regex.IsMatch(go.name, @"^Street_Straight \(1\)(\s\(Clone\))*$"))
+            && direction != Direction.Down)
         {
-            // Perform your desired action here
+            direction = Direction.Up;
             UnityEngine.Debug.Log("Can go up in x: " + x + " y: " + y);
-        }
-
+        }else
         //Check for right
-        if (currentTile.GetComponent<Tile>().allowedAbove.Any(go => Regex.IsMatch(go.name, @"^Street_Straight(\s\(Clone\))*$")))
+        if (currentTile.GetComponent<Tile>().allowedAbove.Any(go => Regex.IsMatch(go.name, @"^Street_Straight(\s\(Clone\))*$"))
+            && direction != Direction.Left)
         {
-            // Perform your desired action here
+            direction = Direction.Right;
             UnityEngine.Debug.Log("Can go right in x: " + x + " y: " + y);
-        }
-
-
+        }else
         //Check for left
-        if (currentTile.GetComponent<Tile>().allowedBelow.Any(go => Regex.IsMatch(go.name, @"^Street_Straight(\s\(Clone\))*$")))
+        if (currentTile.GetComponent<Tile>().allowedBelow.Any(go => Regex.IsMatch(go.name, @"^Street_Straight(\s\(Clone\))*$"))
+            && direction != Direction.Right)
         {
-            // Perform your desired action here
+            direction = Direction.Left;
             UnityEngine.Debug.Log("Can go left in x: " + x + " y: " + y);
-        }
-
-
+        }else
         //Check for down
-        if (currentTile.GetComponent<Tile>().allowedRight.Any(go => Regex.IsMatch(go.name, @"^Street_Straight \(1\)(\s\(Clone\))*$")))
+        if (currentTile.GetComponent<Tile>().allowedRight.Any(go => Regex.IsMatch(go.name, @"^Street_Straight \(1\)(\s\(Clone\))*$"))
+            && direction != Direction.Up)
         {
-            // Perform your desired action here
+            direction = Direction.Down;
             UnityEngine.Debug.Log("Can go down in x: " + x + " y: " + y);
         }
+    }
+
+    public enum Direction
+    {
+        Up,
+        Down,
+        Left,
+        Right,
+        None
     }
 
 
