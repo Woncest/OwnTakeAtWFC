@@ -306,6 +306,12 @@ public class TileGridGenerator : MonoBehaviour
                     }
                 }
 
+                //Check if curve was placed if it is contained in a loop before it gets set
+                if (selectedTilePrefab.name.Contains("Curve"))
+                {
+                    CheckForLoop(x,y, selectedTilePrefab);
+                }
+
                 // Remove the selected tile from the possibleTiles list
                 cellGrid[x, y].possibleTiles.RemoveAll(tile => tile != selectedTilePrefab);
 
@@ -886,6 +892,46 @@ public class TileGridGenerator : MonoBehaviour
                         }
                     }
                 }*/
+    }
+
+    private void CheckForLoop(int x, int y, GameObject tile){
+        //Remember which direction you went in first
+
+        //Remember/Mark which tiles were already visited
+
+        //If you encounter a not set tile break
+
+        GameObject currentTile = tile;
+
+        //Check for above
+        if (currentTile.GetComponent<Tile>().allowedLeft.Any(go => Regex.IsMatch(go.name, @"^Street_Straight \(1\)(\s\(Clone\))*$")))
+        {
+            // Perform your desired action here
+            UnityEngine.Debug.Log("Can go up in x: " + x + " y: " + y);
+        }
+
+        //Check for right
+        if (currentTile.GetComponent<Tile>().allowedAbove.Any(go => Regex.IsMatch(go.name, @"^Street_Straight(\s\(Clone\))*$")))
+        {
+            // Perform your desired action here
+            UnityEngine.Debug.Log("Can go right in x: " + x + " y: " + y);
+        }
+
+
+        //Check for left
+        if (currentTile.GetComponent<Tile>().allowedBelow.Any(go => Regex.IsMatch(go.name, @"^Street_Straight(\s\(Clone\))*$")))
+        {
+            // Perform your desired action here
+            UnityEngine.Debug.Log("Can go left in x: " + x + " y: " + y);
+        }
+
+
+        //Check for down
+        if (currentTile.GetComponent<Tile>().allowedRight.Any(go => Regex.IsMatch(go.name, @"^Street_Straight \(1\)(\s\(Clone\))*$")))
+        {
+            // Perform your desired action here
+            UnityEngine.Debug.Log("Can go down in x: " + x + " y: " + y);
+        }
     }
 
 
