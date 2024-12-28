@@ -919,6 +919,8 @@ public class TileGridGenerator : MonoBehaviour
 
         GameObject currentTile = tile;
 
+        //TODO remembering of the direction should only occur when it is not a Straight Tile
+        //TODO because otherwise double checking the crossings does not work
         // Check for above
         if (currentTile.GetComponent<Tile>().allowedLeft.Any(go => Regex.IsMatch(go.name, @"^Street_Straight \(1\)(\s\(Clone\))*$"))
             && direction != Direction.Down && !HasBeenTraversed(x, y, Direction.Up))
@@ -960,7 +962,7 @@ public class TileGridGenerator : MonoBehaviour
         }
         else
         {
-            UnityEngine.Debug.Log("Cant go in any direction anymore");
+            UnityEngine.Debug.Log("Should only reach this in a loop");
         }
 
         if(x <= 0 || y <= 0 || x >= gridSize - 1 || y >= gridSize - 1){
