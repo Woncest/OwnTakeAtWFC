@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Security.Cryptography.X509Certificates;
 using System.IO;
+using Unity.VisualScripting;
 
 public class TileGridGenerator : MonoBehaviour
 {
@@ -926,7 +927,7 @@ public class TileGridGenerator : MonoBehaviour
             && direction != Direction.Down && !HasBeenTraversed(x, y, Direction.Up))
         {
             direction = Direction.Up;
-            MarkTraversed(x, y, direction);
+            if(!currentTile.name.Contains("Street_Straight")) MarkTraversed(x, y, direction);
             //UnityEngine.Debug.Log("Can go up in x: " + x + " y: " + y);
             if(y != 0) y++;
         }
@@ -936,7 +937,7 @@ public class TileGridGenerator : MonoBehaviour
             && direction != Direction.Left && !HasBeenTraversed(x, y, Direction.Right))
         {
             direction = Direction.Right;
-            MarkTraversed(x, y, direction);
+            if(!currentTile.name.Contains("Street_Straight")) MarkTraversed(x, y, direction);
             //UnityEngine.Debug.Log("Can go right in x: " + x + " y: " + y);
             if(x != 0) x++;
         }
@@ -946,7 +947,7 @@ public class TileGridGenerator : MonoBehaviour
             && direction != Direction.Right && !HasBeenTraversed(x, y, Direction.Left))
         {
             direction = Direction.Left;
-            MarkTraversed(x, y, direction);
+            if(!currentTile.name.Contains("Street_Straight")) MarkTraversed(x, y, direction);
             //UnityEngine.Debug.Log("Can go left in x: " + x + " y: " + y);
             if(x != gridSize - 1) x--;
         }
@@ -956,7 +957,7 @@ public class TileGridGenerator : MonoBehaviour
             && direction != Direction.Up && !HasBeenTraversed(x, y, Direction.Down))
         {
             direction = Direction.Down;
-            MarkTraversed(x, y, direction);
+            if(!currentTile.name.Contains("Street_Straight")) MarkTraversed(x, y, direction);
             //UnityEngine.Debug.Log("Can go down in x: " + x + " y: " + y);
             if(y != gridSize - 1) y--;
         }
@@ -965,8 +966,17 @@ public class TileGridGenerator : MonoBehaviour
             UnityEngine.Debug.Log("Should only reach this in a loop");
         }
 
+        //after traversing check if you are on the edge
+        //if yes assume that street leads outside the grid
+        //TODO check if the street also has an opening in that direction 
         if(x <= 0 || y <= 0 || x >= gridSize - 1 || y >= gridSize - 1){
             UnityEngine.Debug.Log("Cock");
+        }else{
+            if(cellGrid[x,y].tileSet){
+                currentTile = cellGrid[x,y].instantiatedTile;
+            }else{
+                UnityEngine.Debug.Log("Break as it has not finished trying to loop");
+            }
         }
 
         // Log traversedPaths in a readable format
