@@ -209,7 +209,7 @@ public class TileGridGenerator : MonoBehaviour
                 GameObject selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
 
                 //More than rerolling 2 time affect the structure majorly, with 2 times it also affects it but less, 2 resulst in almost no loops that are not connected
-                if (selectedTilePrefab.name.Contains("Curve"))
+                /*if (selectedTilePrefab.name.Contains("Curve"))
                 {
                     // If it was a curve reselect a tile
                     selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
@@ -219,7 +219,7 @@ public class TileGridGenerator : MonoBehaviour
                 {
                     // If it was a curve reselect a tile
                     selectedTilePrefab = cellGrid[x, y].possibleTiles[Random.Range(0, cellGrid[x, y].possibleTiles.Count)];
-                }
+                }*/
 
                 //Check if the selected Tile is acceptable for forcing the desired amount of streets
                 List<GameObject> tilesRight = selectedTilePrefab.GetComponent<Tile>().allowedAbove;
@@ -894,45 +894,92 @@ public class TileGridGenerator : MonoBehaviour
                 }*/
     }
 
-    private void CheckForLoop(int x, int y, GameObject tile){
-        //Remember which direction you went in first
-
-        //Remember/Mark which tiles were already visited
-
-        //If you encounter a not set tile break
-
-        GameObject currentTile = tile;
+    private void CheckForLoop(int x, int y, GameObject tile)
+    {
+        // Initialize a dictionary to track traversed paths
+        Dictionary<(int x, int y), HashSet<Direction>> traversedPaths = new Dictionary<(int x, int y), HashSet<Direction>>();
         Direction direction = Direction.None;
 
-        //Check for above
+        // Function to mark a tile as traversed
+        void MarkTraversed(int currentX, int currentY, Direction dir)
+        {
+            var key = (currentX, currentY);
+            if (!traversedPaths.ContainsKey(key))
+            {
+                traversedPaths[key] = new HashSet<Direction>();
+            }
+            traversedPaths[key].Add(dir);
+        }
+
+        // Function to check if a tile has already been traversed in a direction
+        bool HasBeenTraversed(int currentX, int currentY, Direction dir)
+        {
+            return traversedPaths.TryGetValue((currentX, currentY), out var directions) && directions.Contains(dir);
+        }
+
+        GameObject currentTile = tile;
+
+        // Check for above
         if (currentTile.GetComponent<Tile>().allowedLeft.Any(go => Regex.IsMatch(go.name, @"^Street_Straight \(1\)(\s\(Clone\))*$"))
-            && direction != Direction.Down)
+            && direction != Direction.Down && !HasBeenTraversed(x, y, Direction.Up))
         {
             direction = Direction.Up;
-            UnityEngine.Debug.Log("Can go up in x: " + x + " y: " + y);
-        }else
-        //Check for right
+            MarkTraversed(x, y, direction);
+            //UnityEngine.Debug.Log("Can go up in x: " + x + " y: " + y);
+            if(y != 0) y++;
+        }
+        else
+        // Check for right
         if (currentTile.GetComponent<Tile>().allowedAbove.Any(go => Regex.IsMatch(go.name, @"^Street_Straight(\s\(Clone\))*$"))
-            && direction != Direction.Left)
+            && direction != Direction.Left && !HasBeenTraversed(x, y, Direction.Right))
         {
             direction = Direction.Right;
-            UnityEngine.Debug.Log("Can go right in x: " + x + " y: " + y);
-        }else
-        //Check for left
+            MarkTraversed(x, y, direction);
+            //UnityEngine.Debug.Log("Can go right in x: " + x + " y: " + y);
+            if(x != 0) x++;
+        }
+        else
+        // Check for left
         if (currentTile.GetComponent<Tile>().allowedBelow.Any(go => Regex.IsMatch(go.name, @"^Street_Straight(\s\(Clone\))*$"))
-            && direction != Direction.Right)
+            && direction != Direction.Right && !HasBeenTraversed(x, y, Direction.Left))
         {
             direction = Direction.Left;
-            UnityEngine.Debug.Log("Can go left in x: " + x + " y: " + y);
-        }else
-        //Check for down
+            MarkTraversed(x, y, direction);
+            //UnityEngine.Debug.Log("Can go left in x: " + x + " y: " + y);
+            if(x != gridSize - 1) x--;
+        }
+        else
+        // Check for down
         if (currentTile.GetComponent<Tile>().allowedRight.Any(go => Regex.IsMatch(go.name, @"^Street_Straight \(1\)(\s\(Clone\))*$"))
-            && direction != Direction.Up)
+            && direction != Direction.Up && !HasBeenTraversed(x, y, Direction.Down))
         {
             direction = Direction.Down;
-            UnityEngine.Debug.Log("Can go down in x: " + x + " y: " + y);
+            MarkTraversed(x, y, direction);
+            //UnityEngine.Debug.Log("Can go down in x: " + x + " y: " + y);
+            if(y != gridSize - 1) y--;
         }
+        else
+        {
+            UnityEngine.Debug.Log("Cant go in any direction anymore");
+        }
+
+        if(x <= 0 || y <= 0 || x >= gridSize - 1 || y >= gridSize - 1){
+            UnityEngine.Debug.Log("Cock");
+        }
+
+        // Log traversedPaths in a readable format
+        string traversedPathsString = "Traversed Paths:\n";
+        foreach (var kvp in traversedPaths)
+        {
+            var coordinates = kvp.Key;
+            var directions = kvp.Value;
+
+            traversedPathsString += $"Tile ({coordinates.x}, {coordinates.y}): Directions - {string.Join(", ", directions)}\n";
+        }
+
+        UnityEngine.Debug.Log(traversedPathsString);
     }
+
 
     public enum Direction
     {
