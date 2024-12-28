@@ -919,6 +919,7 @@ public class TileGridGenerator : MonoBehaviour
         }
 
         GameObject currentTile = tile;
+        //TODO make a loop that fills every cellGrid with already gone up to test if it works that it skips up every time then
 
         //TODO remembering of the direction should only occur when it is not a Straight Tile
         //TODO because otherwise double checking the crossings does not work
