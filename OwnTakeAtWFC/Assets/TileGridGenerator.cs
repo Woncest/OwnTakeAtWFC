@@ -307,12 +307,6 @@ public class TileGridGenerator : MonoBehaviour
                     }
                 }
 
-                //Check if curve was placed if it is contained in a loop before it gets set
-                if (selectedTilePrefab.name.Contains("Curve"))
-                {
-                    CheckForLoop(x,y, selectedTilePrefab);
-                }
-
                 // Remove the selected tile from the possibleTiles list
                 cellGrid[x, y].possibleTiles.RemoveAll(tile => tile != selectedTilePrefab);
 
@@ -325,6 +319,12 @@ public class TileGridGenerator : MonoBehaviour
                 // Instantiate the selected tile at the grid position
                 Vector3 position = new Vector3(x, 0, y);
                 cellGrid[x, y].instantiatedTile = Instantiate(selectedTilePrefab, position, Quaternion.identity);
+
+                //Check if curve was placed if it is contained in a loop before it gets set
+                if (selectedTilePrefab.name.Contains("Curve"))
+                {
+                    CheckForLoop(x,y, selectedTilePrefab);
+                }
 
                 //TODO only do stuff when you are setting a non straig street or empty tile
 
@@ -925,47 +925,52 @@ public class TileGridGenerator : MonoBehaviour
             //TODO remembering of the direction should only occur when it is not a Straight Tile
             //TODO because otherwise double checking the crossings does not work
             // Check for above
-            if (currentTile.GetComponent<Tile>().allowedLeft.Any(go => Regex.IsMatch(go.name, @"^Street_Straight \(1\)(\s\(Clone\))*$"))
+            //@"^Street_Straight \(1\)(\s\(Clone\))*$"
+            if (currentTile.GetComponent<Tile>().allowedLeft.Any(go => Regex.IsMatch(go.name, @"^Street_Straight \(1\)(\(Clone\))*$"))
                 && direction != Direction.Down && !HasBeenTraversed(x, y, Direction.Up))
             {
                 direction = Direction.Up;
-                if(!currentTile.name.Contains("Street_Straight")) MarkTraversed(x, y, direction);
+                //if(!currentTile.name.Contains("Street_Straight")) 
+                MarkTraversed(x, y, direction);
                 //UnityEngine.Debug.Log("Can go up in x: " + x + " y: " + y);
                 if(y != 0) y++;
             }
             else
             // Check for right
-            if (currentTile.GetComponent<Tile>().allowedAbove.Any(go => Regex.IsMatch(go.name, @"^Street_Straight(\s\(Clone\))*$"))
+            if (currentTile.GetComponent<Tile>().allowedAbove.Any(go => Regex.IsMatch(go.name, @"^Street_Straight(\(Clone\))*$"))
                 && direction != Direction.Left && !HasBeenTraversed(x, y, Direction.Right))
             {
                 direction = Direction.Right;
-                if(!currentTile.name.Contains("Street_Straight")) MarkTraversed(x, y, direction);
+                //if(!currentTile.name.Contains("Street_Straight")) 
+                MarkTraversed(x, y, direction);
                 //UnityEngine.Debug.Log("Can go right in x: " + x + " y: " + y);
                 if(x != 0) x++;
             }
             else
             // Check for left
-            if (currentTile.GetComponent<Tile>().allowedBelow.Any(go => Regex.IsMatch(go.name, @"^Street_Straight(\s\(Clone\))*$"))
+            if (currentTile.GetComponent<Tile>().allowedBelow.Any(go => Regex.IsMatch(go.name, @"^Street_Straight(\(Clone\))*$"))
                 && direction != Direction.Right && !HasBeenTraversed(x, y, Direction.Left))
             {
                 direction = Direction.Left;
-                if(!currentTile.name.Contains("Street_Straight")) MarkTraversed(x, y, direction);
+                //if(!currentTile.name.Contains("Street_Straight")) 
+                MarkTraversed(x, y, direction);
                 //UnityEngine.Debug.Log("Can go left in x: " + x + " y: " + y);
                 if(x != gridSize - 1) x--;
             }
             else
             // Check for down
-            if (currentTile.GetComponent<Tile>().allowedRight.Any(go => Regex.IsMatch(go.name, @"^Street_Straight \(1\)(\s\(Clone\))*$"))
+            if (currentTile.GetComponent<Tile>().allowedRight.Any(go => Regex.IsMatch(go.name, @"^Street_Straight \(1\)(\(Clone\))*$"))
                 && direction != Direction.Up && !HasBeenTraversed(x, y, Direction.Down))
             {
                 direction = Direction.Down;
-                if(!currentTile.name.Contains("Street_Straight")) MarkTraversed(x, y, direction);
+                //if(!currentTile.name.Contains("Street_Straight")) 
+                MarkTraversed(x, y, direction);
                 //UnityEngine.Debug.Log("Can go down in x: " + x + " y: " + y);
                 if(y != gridSize - 1) y--;
             }
             else
             {
-                UnityEngine.Debug.Log("Should only reach this in a loop");
+                UnityEngine.Debug.Log("Should only reach this in a loop x: " + x + " y: " + y);
                 loop = true;
                 break;
             }
@@ -997,7 +1002,7 @@ public class TileGridGenerator : MonoBehaviour
                 traversedPathsString += $"Tile ({coordinates.x}, {coordinates.y}): Directions - {string.Join(", ", directions)}\n";
             }
 
-            UnityEngine.Debug.Log(traversedPathsString);
+            UnityEngine.Debug.Log(traversedPathsString + "\n Length of traversedPaths " + traversedPaths.Count);
         }
     }
 
