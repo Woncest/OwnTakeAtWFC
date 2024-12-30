@@ -922,8 +922,7 @@ public class TileGridGenerator : MonoBehaviour
         bool loop = false;
 
         while(true){
-            //TODO remembering of the direction should only occur when it is not a Straight Tile
-            //TODO because otherwise double checking the crossings does not work
+            //TODO remember options with mutliple directions, so that you can go back
             // Check for above
             //@"^Street_Straight \(1\)(\s\(Clone\))*$"
             if (currentTile.GetComponent<Tile>().allowedLeft.Any(go => Regex.IsMatch(go.name, @"^Street_Straight \(1\)(\(Clone\))*$"))
