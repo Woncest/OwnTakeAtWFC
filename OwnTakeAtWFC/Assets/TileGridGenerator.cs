@@ -920,62 +920,67 @@ public class TileGridGenerator : MonoBehaviour
 
         GameObject currentTile = tile;
 
-        //TODO remembering of the direction should only occur when it is not a Straight Tile
-        //TODO because otherwise double checking the crossings does not work
-        // Check for above
-        if (currentTile.GetComponent<Tile>().allowedLeft.Any(go => Regex.IsMatch(go.name, @"^Street_Straight \(1\)(\s\(Clone\))*$"))
-            && direction != Direction.Down && !HasBeenTraversed(x, y, Direction.Up))
-        {
-            direction = Direction.Up;
-            if(!currentTile.name.Contains("Street_Straight")) MarkTraversed(x, y, direction);
-            //UnityEngine.Debug.Log("Can go up in x: " + x + " y: " + y);
-            if(y != 0) y++;
-        }
-        else
-        // Check for right
-        if (currentTile.GetComponent<Tile>().allowedAbove.Any(go => Regex.IsMatch(go.name, @"^Street_Straight(\s\(Clone\))*$"))
-            && direction != Direction.Left && !HasBeenTraversed(x, y, Direction.Right))
-        {
-            direction = Direction.Right;
-            if(!currentTile.name.Contains("Street_Straight")) MarkTraversed(x, y, direction);
-            //UnityEngine.Debug.Log("Can go right in x: " + x + " y: " + y);
-            if(x != 0) x++;
-        }
-        else
-        // Check for left
-        if (currentTile.GetComponent<Tile>().allowedBelow.Any(go => Regex.IsMatch(go.name, @"^Street_Straight(\s\(Clone\))*$"))
-            && direction != Direction.Right && !HasBeenTraversed(x, y, Direction.Left))
-        {
-            direction = Direction.Left;
-            if(!currentTile.name.Contains("Street_Straight")) MarkTraversed(x, y, direction);
-            //UnityEngine.Debug.Log("Can go left in x: " + x + " y: " + y);
-            if(x != gridSize - 1) x--;
-        }
-        else
-        // Check for down
-        if (currentTile.GetComponent<Tile>().allowedRight.Any(go => Regex.IsMatch(go.name, @"^Street_Straight \(1\)(\s\(Clone\))*$"))
-            && direction != Direction.Up && !HasBeenTraversed(x, y, Direction.Down))
-        {
-            direction = Direction.Down;
-            if(!currentTile.name.Contains("Street_Straight")) MarkTraversed(x, y, direction);
-            //UnityEngine.Debug.Log("Can go down in x: " + x + " y: " + y);
-            if(y != gridSize - 1) y--;
-        }
-        else
-        {
-            UnityEngine.Debug.Log("Should only reach this in a loop");
-        }
+        while(true){
+            //TODO remembering of the direction should only occur when it is not a Straight Tile
+            //TODO because otherwise double checking the crossings does not work
+            // Check for above
+            if (currentTile.GetComponent<Tile>().allowedLeft.Any(go => Regex.IsMatch(go.name, @"^Street_Straight \(1\)(\s\(Clone\))*$"))
+                && direction != Direction.Down && !HasBeenTraversed(x, y, Direction.Up))
+            {
+                direction = Direction.Up;
+                if(!currentTile.name.Contains("Street_Straight")) MarkTraversed(x, y, direction);
+                //UnityEngine.Debug.Log("Can go up in x: " + x + " y: " + y);
+                if(y != 0) y++;
+            }
+            else
+            // Check for right
+            if (currentTile.GetComponent<Tile>().allowedAbove.Any(go => Regex.IsMatch(go.name, @"^Street_Straight(\s\(Clone\))*$"))
+                && direction != Direction.Left && !HasBeenTraversed(x, y, Direction.Right))
+            {
+                direction = Direction.Right;
+                if(!currentTile.name.Contains("Street_Straight")) MarkTraversed(x, y, direction);
+                //UnityEngine.Debug.Log("Can go right in x: " + x + " y: " + y);
+                if(x != 0) x++;
+            }
+            else
+            // Check for left
+            if (currentTile.GetComponent<Tile>().allowedBelow.Any(go => Regex.IsMatch(go.name, @"^Street_Straight(\s\(Clone\))*$"))
+                && direction != Direction.Right && !HasBeenTraversed(x, y, Direction.Left))
+            {
+                direction = Direction.Left;
+                if(!currentTile.name.Contains("Street_Straight")) MarkTraversed(x, y, direction);
+                //UnityEngine.Debug.Log("Can go left in x: " + x + " y: " + y);
+                if(x != gridSize - 1) x--;
+            }
+            else
+            // Check for down
+            if (currentTile.GetComponent<Tile>().allowedRight.Any(go => Regex.IsMatch(go.name, @"^Street_Straight \(1\)(\s\(Clone\))*$"))
+                && direction != Direction.Up && !HasBeenTraversed(x, y, Direction.Down))
+            {
+                direction = Direction.Down;
+                if(!currentTile.name.Contains("Street_Straight")) MarkTraversed(x, y, direction);
+                //UnityEngine.Debug.Log("Can go down in x: " + x + " y: " + y);
+                if(y != gridSize - 1) y--;
+            }
+            else
+            {
+                UnityEngine.Debug.Log("Should only reach this in a loop");
+                break;
+            }
 
-        //after traversing check if you are on the edge
-        //if yes assume that street leads outside the grid
-        //TODO check if the street also has an opening in that direction 
-        if(x <= 0 || y <= 0 || x >= gridSize - 1 || y >= gridSize - 1){
-            UnityEngine.Debug.Log("Cock");
-        }else{
-            if(cellGrid[x,y].tileSet){
-                currentTile = cellGrid[x,y].instantiatedTile;
+            //after traversing check if you are on the edge
+            //if yes assume that street leads outside the grid
+            //TODO check if the street also has an opening in that direction 
+            if(x <= 0 || y <= 0 || x >= gridSize - 1 || y >= gridSize - 1){
+                UnityEngine.Debug.Log("Reached the edge and assumes it goes beyond the grid size");
+                break;
             }else{
-                UnityEngine.Debug.Log("Break as it has not finished trying to loop");
+                if(cellGrid[x,y].tileSet){
+                    currentTile = cellGrid[x,y].instantiatedTile;
+                }else{
+                    UnityEngine.Debug.Log("Break as it has not finished building the loop");
+                    break;
+                }
             }
         }
 
