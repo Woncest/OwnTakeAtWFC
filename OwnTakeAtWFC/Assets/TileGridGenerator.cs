@@ -919,6 +919,7 @@ public class TileGridGenerator : MonoBehaviour
         }
 
         GameObject currentTile = tile;
+        bool loop = false;
 
         while(true){
             //TODO remembering of the direction should only occur when it is not a Straight Tile
@@ -965,6 +966,7 @@ public class TileGridGenerator : MonoBehaviour
             else
             {
                 UnityEngine.Debug.Log("Should only reach this in a loop");
+                loop = true;
                 break;
             }
 
@@ -972,29 +974,31 @@ public class TileGridGenerator : MonoBehaviour
             //if yes assume that street leads outside the grid
             //TODO check if the street also has an opening in that direction 
             if(x <= 0 || y <= 0 || x >= gridSize - 1 || y >= gridSize - 1){
-                UnityEngine.Debug.Log("Reached the edge and assumes it goes beyond the grid size");
+                //UnityEngine.Debug.Log("Reached the edge and assumes it goes beyond the grid size");
                 break;
             }else{
                 if(cellGrid[x,y].tileSet){
                     currentTile = cellGrid[x,y].instantiatedTile;
                 }else{
-                    UnityEngine.Debug.Log("Break as it has not finished building the loop");
+                    //UnityEngine.Debug.Log("Break as it has not finished building the loop");
                     break;
                 }
             }
         }
 
         // Log traversedPaths in a readable format
-        string traversedPathsString = "Traversed Paths:\n";
-        foreach (var kvp in traversedPaths)
-        {
-            var coordinates = kvp.Key;
-            var directions = kvp.Value;
+        if(loop){
+            string traversedPathsString = "Traversed Paths:\n";
+            foreach (var kvp in traversedPaths)
+            {
+                var coordinates = kvp.Key;
+                var directions = kvp.Value;
 
-            traversedPathsString += $"Tile ({coordinates.x}, {coordinates.y}): Directions - {string.Join(", ", directions)}\n";
+                traversedPathsString += $"Tile ({coordinates.x}, {coordinates.y}): Directions - {string.Join(", ", directions)}\n";
+            }
+
+            UnityEngine.Debug.Log(traversedPathsString);
         }
-
-        UnityEngine.Debug.Log(traversedPathsString);
     }
 
 
