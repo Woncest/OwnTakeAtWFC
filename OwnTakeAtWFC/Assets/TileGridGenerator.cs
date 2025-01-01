@@ -977,6 +977,17 @@ public class TileGridGenerator : MonoBehaviour
             }
             else
             {
+                foreach (var kvp in traversedPaths)
+                {
+                    var coordinates = kvp.Key;
+                    var data = kvp.Value;
+
+                    if(!cellGrid[coordinates.x, coordinates.y].instantiatedTile.gameObject.name.Contains("Street_Straight")){
+                        if (data.amountOpenSides != data.directions.Count){
+                            UnityEngine.Debug.LogWarning("Did not go all directions at x: " + coordinates.x + " y: " + coordinates.y);
+                        }
+                    }
+                }
                 UnityEngine.Debug.Log("Should only reach this in a loop x: " + x + " y: " + y);
                 loop = true;
                 break;
