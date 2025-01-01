@@ -923,6 +923,8 @@ public class TileGridGenerator : MonoBehaviour
 
         while(true){
             //TODO remember options with mutliple directions, so that you can go back
+            //TODO before saying it was a loop check if in the remembered list there are curves/crossings with unchecked directions
+            //TODO if yes set it as tile and continue and set x and y to the key
             // Check for above
             //@"^Street_Straight \(1\)(\s\(Clone\))*$"
             if (currentTile.GetComponent<Tile>().allowedLeft.Any(go => Regex.IsMatch(go.name, @"^Street_Straight \(1\)(\(Clone\))*$"))
