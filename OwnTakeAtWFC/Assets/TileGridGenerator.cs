@@ -923,21 +923,8 @@ public class TileGridGenerator : MonoBehaviour
             return traversedPaths.TryGetValue((currentX, currentY), out var data) && data.directions.Contains(dir);
         }
 
-        // Function to get the count of traversed directions for a tile
-        int GetTraversedDirectionCount(int currentX, int currentY)
-        {
-            return traversedPaths.TryGetValue((currentX, currentY), out var data) ? data.directions.Count : 0;
-        }
-
-        // Function to get the int value for a specific tile
-        int GetTileValue(int currentX, int currentY)
-        {
-            return traversedPaths.TryGetValue((currentX, currentY), out var data) ? data.amountOpenSides : -1; // Return -1 if the key doesn't exist
-        }
-
         GameObject currentTile = tile;
         bool loop = false;
-        int count = 0;
 
         while (true)
         {
@@ -978,6 +965,7 @@ public class TileGridGenerator : MonoBehaviour
             }
             else
             {
+                //Last Checks before determening if it is a loop
                 bool cut = false;
                 foreach (var kvp in traversedPaths)
                 {
@@ -988,7 +976,6 @@ public class TileGridGenerator : MonoBehaviour
                         if (data.amountOpenSides != data.directions.Count){
                             x = coordinates.x;
                             y = coordinates.y;
-                            currentTile = cellGrid[x,y].instantiatedTile;
                             cut = true;
                             direction = Direction.None;
                             break;
@@ -996,7 +983,6 @@ public class TileGridGenerator : MonoBehaviour
                     }
                 }
                 if(!cut){
-                    UnityEngine.Debug.Log("Should only reach this in a loop x: " + x + " y: " + y);
                     loop = true;
                     break;
                 }
