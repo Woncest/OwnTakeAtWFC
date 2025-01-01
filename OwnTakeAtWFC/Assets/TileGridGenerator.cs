@@ -937,6 +937,7 @@ public class TileGridGenerator : MonoBehaviour
 
         GameObject currentTile = tile;
         bool loop = false;
+        int count = 0;
 
         while (true)
         {
@@ -977,6 +978,7 @@ public class TileGridGenerator : MonoBehaviour
             }
             else
             {
+                bool cut = false;
                 foreach (var kvp in traversedPaths)
                 {
                     var coordinates = kvp.Key;
@@ -984,13 +986,20 @@ public class TileGridGenerator : MonoBehaviour
 
                     if(!cellGrid[coordinates.x, coordinates.y].instantiatedTile.gameObject.name.Contains("Street_Straight")){
                         if (data.amountOpenSides != data.directions.Count){
-                            
+                            x = coordinates.x;
+                            y = coordinates.y;
+                            currentTile = cellGrid[x,y].instantiatedTile;
+                            cut = true;
+                            direction = Direction.None;
+                            break;
                         }
                     }
                 }
-                UnityEngine.Debug.Log("Should only reach this in a loop x: " + x + " y: " + y);
-                loop = true;
-                break;
+                if(!cut){
+                    UnityEngine.Debug.Log("Should only reach this in a loop x: " + x + " y: " + y);
+                    loop = true;
+                    break;
+                }
             }
 
             if (x <= 0 || y <= 0 || x >= gridSize - 1 || y >= gridSize - 1)
