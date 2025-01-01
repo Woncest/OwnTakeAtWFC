@@ -320,22 +320,33 @@ public class TileGridGenerator : MonoBehaviour
                 Vector3 position = new Vector3(x, 0, y);
                 cellGrid[x, y].instantiatedTile = Instantiate(selectedTilePrefab, position, Quaternion.identity);
 
+                bool foundLoop = false;
                 //Check if curve was placed if it is contained in a loop before it gets set
                 if (selectedTilePrefab.name.Contains("Curve"))
                 {
-                    CheckForLoop(x,y, selectedTilePrefab);
+                    foundLoop = CheckForLoop(x,y, selectedTilePrefab);
+                }
+
+                //TODO does not work perfectly yet, often sets a wrong tile and I would not know why
+                //TODO when removing tiles should check if vertical street is being removed, because that is wrong
+                //TODO easiest solution would be just start anew when loop is found
+                if(foundLoop){
+                    ResetCurrentRow(y);
+                    GoThroughEverything();
+                    UnityEngine.Debug.Log("y: " + y);
+                    y--;
+                    break;
                 }
 
                 //TODO only do stuff when you are setting a non straig street or empty tile
-
                 if (selectedTilePrefab.GetComponent<Tile>().allowedAbove.Any(tile => tile.name == "Street_Straight") 
-                && selectedTilePrefab.gameObject.name != "Street_Straight")
+                && selectedTilePrefab.gameObject.name != "Street_Straight" && !foundLoop)
                 {
                     DoSomethingHorizontal(x, y);
                 }
 
                 if (selectedTilePrefab.GetComponent<Tile>().allowedLeft.Any(tile => tile.name == "Street_Straight (1)")
-                && selectedTilePrefab.gameObject.name != "Street_Straight (1)")
+                && selectedTilePrefab.gameObject.name != "Street_Straight (1)" && !foundLoop)
                 {
                     DoSomethingVertical(x, y);
                 }
@@ -455,6 +466,25 @@ public class TileGridGenerator : MonoBehaviour
     {
         // Destroy all instantiated tiles and clear cell grid data
         for (int y = 0; y < gridSize; y++)
+        {
+            for (int x = 0; x < gridSize; x++)
+            {
+                // Destroy the instantiated tile if it exists
+                if (cellGrid[x, y].instantiatedTile != null)
+                {
+                    Destroy(cellGrid[x, y].instantiatedTile);
+                }
+
+                // Reinitialize the cell's possible tiles
+                cellGrid[x, y].possibleTiles = new List<GameObject>(tilePrefabs);
+                cellGrid[x, y].instantiatedTile = null;  // Clear reference to the instantiated tile
+                cellGrid[x,y].tileSet = false;
+            }
+        }
+    }
+
+    void ResetCurrentRow(int yOriginal){
+        for (int y = yOriginal; y < gridSize; y++)
         {
             for (int x = 0; x < gridSize; x++)
             {
@@ -796,7 +826,7 @@ public class TileGridGenerator : MonoBehaviour
         {
             for (int z = gridSize - 1; z > 0; z--)
             {
-                if (!cellGrid[z, i].tileSet && cellGrid[z, i].possibleTiles.Count != tilePrefabs.Count)
+                if (cellGrid[z, i].possibleTiles.Count != tilePrefabs.Count)
                 {
                     SetNeighboursOnlyNeighbours(z, i);
                 }
@@ -895,7 +925,7 @@ public class TileGridGenerator : MonoBehaviour
                 }*/
     }
 
-    private void CheckForLoop(int x, int y, GameObject tile)
+    private bool CheckForLoop(int x, int y, GameObject tile)
     {
         // Initialize a dictionary to track traversed paths and an additional int value
         Dictionary<(int x, int y), (HashSet<Direction> directions, int amountOpenSides)> traversedPaths =
@@ -924,7 +954,6 @@ public class TileGridGenerator : MonoBehaviour
         }
 
         GameObject currentTile = tile;
-        bool loop = false;
 
         while (true)
         {
@@ -983,14 +1012,14 @@ public class TileGridGenerator : MonoBehaviour
                     }
                 }
                 if(!cut){
-                    loop = true;
-                    break;
+                    UnityEngine.Debug.Log("Fuck you loop found");
+                    return true;
                 }
             }
 
             if (x <= 0 || y <= 0 || x >= gridSize - 1 || y >= gridSize - 1)
             {
-                break;
+                return false;
             }
             else
             {
@@ -1000,13 +1029,13 @@ public class TileGridGenerator : MonoBehaviour
                 }
                 else
                 {
-                    break;
+                    return false;
                 }
             }
         }
 
         // Log traversedPaths in a readable format
-        if (loop)
+        /*if (loop)
         {
             string traversedPathsString = "Traversed Paths:\n";
             foreach (var kvp in traversedPaths)
@@ -1018,7 +1047,7 @@ public class TileGridGenerator : MonoBehaviour
             }
 
             UnityEngine.Debug.Log(traversedPathsString + "\n Length of traversedPaths " + traversedPaths.Count);
-        }
+        }*/
     }
 
     int CountOpenSides(int x, int y){
