@@ -898,7 +898,7 @@ public class TileGridGenerator : MonoBehaviour
     private void CheckForLoop(int x, int y, GameObject tile)
     {
         // Initialize a dictionary to track traversed paths and an additional int value
-        Dictionary<(int x, int y), (HashSet<Direction> directions, int someValue)> traversedPaths =
+        Dictionary<(int x, int y), (HashSet<Direction> directions, int amountOpenSides)> traversedPaths =
             new Dictionary<(int x, int y), (HashSet<Direction>, int)>();
         Direction direction = Direction.None;
 
@@ -932,7 +932,7 @@ public class TileGridGenerator : MonoBehaviour
         // Function to get the int value for a specific tile
         int GetTileValue(int currentX, int currentY)
         {
-            return traversedPaths.TryGetValue((currentX, currentY), out var data) ? data.someValue : -1; // Return -1 if the key doesn't exist
+            return traversedPaths.TryGetValue((currentX, currentY), out var data) ? data.amountOpenSides : -1; // Return -1 if the key doesn't exist
         }
 
         GameObject currentTile = tile;
@@ -1008,7 +1008,7 @@ public class TileGridGenerator : MonoBehaviour
                 var coordinates = kvp.Key;
                 var data = kvp.Value;
 
-                traversedPathsString += $"Tile ({coordinates.x}, {coordinates.y}): Directions - {string.Join(", ", data.directions)}, Value - {data.someValue}\n";
+                traversedPathsString += $"Tile ({coordinates.x}, {coordinates.y}): Directions - {string.Join(", ", data.directions)}, Value - {data.amountOpenSides}\n";
             }
 
             UnityEngine.Debug.Log(traversedPathsString + "\n Length of traversedPaths " + traversedPaths.Count);
