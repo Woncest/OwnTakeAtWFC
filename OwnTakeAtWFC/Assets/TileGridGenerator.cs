@@ -984,7 +984,7 @@ public class TileGridGenerator : MonoBehaviour
 
                     if(!cellGrid[coordinates.x, coordinates.y].instantiatedTile.gameObject.name.Contains("Street_Straight")){
                         if (data.amountOpenSides != data.directions.Count){
-                            UnityEngine.Debug.LogWarning("Did not go all directions at x: " + coordinates.x + " y: " + coordinates.y);
+                            
                         }
                     }
                 }
