@@ -333,7 +333,6 @@ public class TileGridGenerator : MonoBehaviour
                 if(foundLoop){
                     ResetCurrentRow(y);
                     GoThroughEverything();
-                    UnityEngine.Debug.Log("y: " + y);
                     y--;
                     break;
                 }
@@ -822,9 +821,9 @@ public class TileGridGenerator : MonoBehaviour
 
     private void GoThroughEverything()
     {
-        for (int i = gridSize - 1; i > 0; i--)
+        for (int i = gridSize - 1; i >= 0; i--)
         {
-            for (int z = gridSize - 1; z > 0; z--)
+            for (int z = gridSize - 1; z >= 0; z--)
             {
                 if (cellGrid[z, i].possibleTiles.Count != tilePrefabs.Count)
                 {
