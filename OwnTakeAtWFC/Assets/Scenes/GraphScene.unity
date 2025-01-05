@@ -156,8 +156,12 @@ MonoBehaviour:
   gridSizeY: 25
   nodeSpacing: 1.5
   nodeRadius: 0.2
-  nodeColor: {r: 0, g: 0, b: 1, a: 1}
-  edgeColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  nodeColor: {r: 0, g: 0, b: 0.6509434, a: 1}
+  edgeColor: {r: 1, g: 0, b: 0, a: 1}
+  chanceOf0Edges: 25
+  chanceOf2Edges: 25
+  chanceOf3Edges: 25
+  chanceOf4Edges: 25
 --- !u!4 &321253994
 Transform:
   m_ObjectHideFlags: 0
