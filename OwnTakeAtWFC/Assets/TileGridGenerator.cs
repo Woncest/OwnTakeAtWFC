@@ -4,9 +4,6 @@ using UnityEngine;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Security.Cryptography.X509Certificates;
-using System.IO;
-using Unity.VisualScripting;
 
 public class TileGridGenerator : MonoBehaviour
 {
@@ -747,7 +744,7 @@ public class TileGridGenerator : MonoBehaviour
             Vector3 position = new Vector3(i, 0, y);
             cellGrid[i, y].instantiatedTile = Instantiate(cellGrid[i, y].possibleTiles.First(), position, Quaternion.identity);
 
-            //TODO set allowedUp and allowedLeft and allowedRight
+            //Past Idea was the same in DoSomethingVertical
             /*if(i + 1 < gridSize){
                 //allowedAbove
                 cellGrid[i + 1, y].possibleTiles = cellGrid[i, y].instantiatedTile.GetComponent<Tile>().allowedAbove;
@@ -792,29 +789,6 @@ public class TileGridGenerator : MonoBehaviour
             Vector3 position = new Vector3(x, 0, i);
             cellGrid[x, i].instantiatedTile = Instantiate(cellGrid[x, i].possibleTiles.First(), position, Quaternion.identity);
 
-            //TODO set allowedUp and allowedLeft and allowedDown
-            /*if(i + 1 < gridSize){
-                //allowedLeft
-                cellGrid[x, i + 1].possibleTiles = cellGrid[x, i].instantiatedTile.GetComponent<Tile>().allowedLeft;
-
-                // Get the allowedAbove list
-                List<GameObject> allowedAbove2 = cellGrid[x, i].instantiatedTile.GetComponent<Tile>().allowedLeft;
-
-                // Build a string with the names of the GameObjects in the list
-                string allowedAboveNames2 = string.Join(", ", allowedAbove2.Select(tile => tile.name));
-
-                // Log the names
-                UnityEngine.Debug.Log("Allowed Left Tiles for cellGrid[" + x + ", " + i + "]: " + allowedAboveNames2);
-            }
-            if(x + 1 < gridSize){
-                //allowedUp
-                cellGrid[x + 1, i].possibleTiles = cellGrid[x, i].instantiatedTile.GetComponent<Tile>().allowedAbove;
-            }
-            if(x - 1 >= 0){
-                //allowedDown
-                cellGrid[x - 1, i].possibleTiles = cellGrid[x, i].instantiatedTile.GetComponent<Tile>().allowedBelow;
-            }*/
-            //TODO add that before we reset all options in cells
             GoThroughEverything();
         }
     }
