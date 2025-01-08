@@ -84,6 +84,9 @@ public class TileGridGenerator : MonoBehaviour
         Stopwatch stopwatch = new Stopwatch();  // Start timing
         stopwatch.Start();
 
+        //method to set the street_straight and street:straight1
+        SetSpecialTilesToCurrentTileSet();
+
         if (showGenerationProcess)
         {
             coroutine = StartCoroutine(GenerateGridWithVisualProcess());  // Start coroutine for visual generation
@@ -903,7 +906,23 @@ public class TileGridGenerator : MonoBehaviour
 
 
 
+    void SetSpecialTilesToCurrentTileSet(){
+        //Set street_straight
+        GameObject street_straightFromTileSet = tilePrefabs.FirstOrDefault(prefab => prefab.name == "Street_Straight");
+        street_straight.GetComponent<Tile>().allowedAbove = street_straightFromTileSet.GetComponent<Tile>().allowedAbove;
+        street_straight.GetComponent<Tile>().allowedLeft = street_straightFromTileSet.GetComponent<Tile>().allowedLeft;
+        street_straight.GetComponent<Tile>().allowedRight = street_straightFromTileSet.GetComponent<Tile>().allowedRight;
+        street_straight.GetComponent<Tile>().allowedBelow.Clear();
+        street_straight.GetComponent<Tile>().allowedBelow.Add(street_straightFromTileSet);
 
+        //Set street_straight1
+        GameObject street_straight1FromTileSet = tilePrefabs.FirstOrDefault(prefab => prefab.name == "Street_Straight (1)");
+        street_straight1.GetComponent<Tile>().allowedAbove = street_straight1FromTileSet.GetComponent<Tile>().allowedAbove;
+        street_straight1.GetComponent<Tile>().allowedLeft = street_straight1FromTileSet.GetComponent<Tile>().allowedLeft;
+        street_straight1.GetComponent<Tile>().allowedBelow = street_straight1FromTileSet.GetComponent<Tile>().allowedBelow;
+        street_straight1.GetComponent<Tile>().allowedRight.Clear();
+        street_straight1.GetComponent<Tile>().allowedRight.Add(street_straight1FromTileSet);
+    }
 
 
 
