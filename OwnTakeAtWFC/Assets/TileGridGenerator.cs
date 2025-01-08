@@ -11,7 +11,7 @@ public class TileGridGenerator : MonoBehaviour
 
     [HideInInspector] public int newGridSize = 5;
     public CameraZoomController cameraZoomController;
-    [HideInInspector] public List<GameObject> tilePrefabs;  // Array of tile prefabs to choose from
+    public List<GameObject> tilePrefabs;  // Array of tile prefabs to choose from
     public bool showGenerationProcess = true;  // New boolean to control visual generation
     public float generationDelay = 0.01f;  // Delay between each tile generation
     private Coroutine coroutine;
@@ -345,7 +345,7 @@ public class TileGridGenerator : MonoBehaviour
                 if (selectedTilePrefab.GetComponent<Tile>().allowedAbove.Any(tile => tile.name == "Street_Straight") 
                 && selectedTilePrefab.gameObject.name != "Street_Straight" && !foundLoop)
                 {
-                    DoSomethingHorizontalEverySecond(x, y);
+                    DoSomethingHorizontal(x, y);
                 }
 
                 if (selectedTilePrefab.GetComponent<Tile>().allowedLeft.Any(tile => tile.name == "Street_Straight (1)")
@@ -868,12 +868,12 @@ public class TileGridGenerator : MonoBehaviour
             }
 
             //Go into the special tile and set the sides to what this tileset would allow in the not forced directions
-            cellGrid[i,y].possibleTiles.Clear();
+            cellGrid[x,i].possibleTiles.Clear();
             if(streetLength == counter){
-                cellGrid[x,i].possibleTiles.Add(street_straight);
+                cellGrid[x,i].possibleTiles.Add(street_straight1);
             }else{
-                street_straight.GetComponent<Tile>().allowedRight = street_straight.GetComponent<Tile>().allowedLeft;
-                cellGrid[x,i].possibleTiles.Add(street_straight);
+                street_straight1.GetComponent<Tile>().allowedRight = street_straight.GetComponent<Tile>().allowedLeft;
+                cellGrid[x,i].possibleTiles.Add(street_straight1);
             }
 
             // Set the selected tile on the cell
