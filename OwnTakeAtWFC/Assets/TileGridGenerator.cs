@@ -771,8 +771,7 @@ public class TileGridGenerator : MonoBehaviour
 
     private void DoSomethingHorizontalEverySecond(int x, int y){
         //Set the horizontal Line (currently fix 3 long) Number - 1 == the length (ex. 1 < 4 + y == 3)
-        //TODO maybe do for streetLength + 1/2 and count up by 2 and rounded down, with 3 length we only need to set 1 tile
-        //TODO but need to check wether street length was even or odd
+        //TODO can be a bit more optimized we can be sure that the very first one is safe
 
         //counter to keep track which segment of the street we are looking at
         int counter = 1;
@@ -792,11 +791,14 @@ public class TileGridGenerator : MonoBehaviour
                 break;
             }
 
-            cellGrid[i, y].possibleTiles = cellGrid[i, y].possibleTiles
-            .Where(tile => Regex.IsMatch(tile.name, @"^Street_Straight(\(Clone\))*$"))
-            .ToList();
-
             //Go into the special tile and set the sides to what this tileset would allow in the not forced directions
+            cellGrid[i,y].possibleTiles.Clear();
+            if(streetLength == counter){
+                cellGrid[i,y].possibleTiles.Add(street_straight);
+            }else{
+                street_straight.GetComponent<Tile>().allowedAbove = street_straight.GetComponent<Tile>().allowedBelow;
+                cellGrid[i,y].possibleTiles.Add(street_straight);
+            }
             
             // Set the selected tile on the cell
             cellGrid[i, y].SetTile(cellGrid[i, y].possibleTiles.First());
@@ -809,6 +811,7 @@ public class TileGridGenerator : MonoBehaviour
             cellGrid[i, y].instantiatedTile = Instantiate(cellGrid[i, y].possibleTiles.First(), position, Quaternion.identity);
 
             GoThroughEverything();
+            SetSpecialTilesToCurrentTileSet();
             counter++;
         }
     }
@@ -841,6 +844,51 @@ public class TileGridGenerator : MonoBehaviour
             cellGrid[x, i].instantiatedTile = Instantiate(cellGrid[x, i].possibleTiles.First(), position, Quaternion.identity);
 
             GoThroughEverything();
+        }
+    }
+
+    private void DoSomethingVerticalEverySecond(int x, int y){
+        //Set the vertical Line (currently fix 3 long) Number - 1 == the length (ex. 1 < 4 + y == 3)
+
+        int counter = 1;
+        for (int i = y + 1; i < streetLength + 1 + y; i++) 
+        {
+            if(i >= gridSize){
+                break;
+            }
+
+            if(counter%2 != 0){
+                counter++;
+                continue;
+            }
+            
+            if(cellGrid[x, i].tileSet){
+            UnityEngine.Debug.LogError("Should be empty ?" + cellGrid[i, y].instantiatedTile.name);
+            break;
+            }
+
+            //Go into the special tile and set the sides to what this tileset would allow in the not forced directions
+            cellGrid[i,y].possibleTiles.Clear();
+            if(streetLength == counter){
+                cellGrid[x,i].possibleTiles.Add(street_straight);
+            }else{
+                street_straight.GetComponent<Tile>().allowedRight = street_straight.GetComponent<Tile>().allowedLeft;
+                cellGrid[x,i].possibleTiles.Add(street_straight);
+            }
+
+            // Set the selected tile on the cell
+            cellGrid[x, i].SetTile(cellGrid[x, i].possibleTiles.First());
+
+            // Proceed with setting neighbors and instantiating the tile
+            SetNeighboursHorizontally(x, i);
+
+            // Instantiate the selected tile at the grid position
+            Vector3 position = new Vector3(x, 0, i);
+            cellGrid[x, i].instantiatedTile = Instantiate(cellGrid[x, i].possibleTiles.First(), position, Quaternion.identity);
+
+            GoThroughEverything();
+            SetSpecialTilesToCurrentTileSet();
+            counter++;
         }
     }
 
