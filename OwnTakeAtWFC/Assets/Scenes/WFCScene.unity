@@ -13012,6 +13012,8 @@ MonoBehaviour:
   showGenerationProcess: 0
   generationDelay: 0
   streetLength: 2
+  street_straight: {fileID: 6901536653084979788, guid: 330c56199e7c8154a8aa974c8e1aabf7, type: 3}
+  street_straight1: {fileID: 2088846505063992706, guid: 2ca02765c919aee4f8b53c68cca75d3f, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

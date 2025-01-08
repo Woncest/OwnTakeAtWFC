@@ -20,6 +20,10 @@ public class TileGridGenerator : MonoBehaviour
 
     [HideInInspector] public int streetLength = 2;
 
+    public GameObject street_straight;
+
+    public GameObject street_straight1;
+
     void Start()
     {
         InitializeCellGrid();
@@ -788,6 +792,8 @@ public class TileGridGenerator : MonoBehaviour
             cellGrid[i, y].possibleTiles = cellGrid[i, y].possibleTiles
             .Where(tile => Regex.IsMatch(tile.name, @"^Street_Straight(\(Clone\))*$"))
             .ToList();
+
+            //Go into the special tile and set the sides to what this tileset would allow in the not forced directions
             
             // Set the selected tile on the cell
             cellGrid[i, y].SetTile(cellGrid[i, y].possibleTiles.First());
