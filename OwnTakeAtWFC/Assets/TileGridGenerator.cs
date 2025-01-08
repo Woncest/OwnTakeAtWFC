@@ -351,7 +351,7 @@ public class TileGridGenerator : MonoBehaviour
                 if (selectedTilePrefab.GetComponent<Tile>().allowedLeft.Any(tile => tile.name == "Street_Straight (1)")
                 && selectedTilePrefab.gameObject.name != "Street_Straight (1)" && !foundLoop)
                 {
-                    DoSomethingVertical(x, y);
+                    DoSomethingVerticalEverySecond(x, y);
                 }
             }
         }
@@ -873,7 +873,7 @@ public class TileGridGenerator : MonoBehaviour
             if(streetLength == counter){
                 cellGrid[x,i].possibleTiles.Add(street_straight1);
             }else{
-                street_straight1.GetComponent<Tile>().allowedRight = street_straight1.GetComponent<Tile>().allowedLeft;
+                street_straight1.GetComponent<Tile>().allowedLeft = street_straight1.GetComponent<Tile>().allowedRight;
                 cellGrid[x,i].possibleTiles.Add(street_straight1);
             }
 
