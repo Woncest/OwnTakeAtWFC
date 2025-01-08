@@ -338,7 +338,7 @@ public class TileGridGenerator : MonoBehaviour
                 if (selectedTilePrefab.GetComponent<Tile>().allowedAbove.Any(tile => tile.name == "Street_Straight") 
                 && selectedTilePrefab.gameObject.name != "Street_Straight" && !foundLoop)
                 {
-                    DoSomethingHorizontal(x, y);
+                    DoSomethingHorizontalEverySecond(x, y);
                 }
 
                 if (selectedTilePrefab.GetComponent<Tile>().allowedLeft.Any(tile => tile.name == "Street_Straight (1)")
@@ -759,6 +759,48 @@ public class TileGridGenerator : MonoBehaviour
                 cellGrid[i, y - 1].possibleTiles = cellGrid[i, y].instantiatedTile.GetComponent<Tile>().allowedRight;
             }*/
             GoThroughEverything();
+        }
+    }
+
+    private void DoSomethingHorizontalEverySecond(int x, int y){
+        //Set the horizontal Line (currently fix 3 long) Number - 1 == the length (ex. 1 < 4 + y == 3)
+        //TODO maybe do for streetLength + 1/2 and count up by 2 and rounded down, with 3 length we only need to set 1 tile
+        //TODO but need to check wether street length was even or odd
+
+        //counter to keep track which segment of the street we are looking at
+        int counter = 1;
+        for (int i = x + 1; i < streetLength + 1 + x; i++) 
+        {
+            if(i >= gridSize){
+                break;
+            }
+
+            if(counter%2 != 0){
+                counter++;
+                continue;
+            }
+
+            if(cellGrid[i, y].tileSet){
+                UnityEngine.Debug.LogError("Should be empty ? " + cellGrid[i, y].instantiatedTile.name);
+                break;
+            }
+
+            cellGrid[i, y].possibleTiles = cellGrid[i, y].possibleTiles
+            .Where(tile => Regex.IsMatch(tile.name, @"^Street_Straight(\(Clone\))*$"))
+            .ToList();
+            
+            // Set the selected tile on the cell
+            cellGrid[i, y].SetTile(cellGrid[i, y].possibleTiles.First());
+
+            // Proceed with setting neighbors and instantiating the tile
+            SetNeighboursHorizontally(i, y);
+
+            // Instantiate the selected tile at the grid position
+            Vector3 position = new Vector3(i, 0, y);
+            cellGrid[i, y].instantiatedTile = Instantiate(cellGrid[i, y].possibleTiles.First(), position, Quaternion.identity);
+
+            GoThroughEverything();
+            counter++;
         }
     }
 
