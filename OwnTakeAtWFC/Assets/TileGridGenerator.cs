@@ -345,7 +345,7 @@ public class TileGridGenerator : MonoBehaviour
                 if (selectedTilePrefab.GetComponent<Tile>().allowedAbove.Any(tile => tile.name == "Street_Straight") 
                 && selectedTilePrefab.gameObject.name != "Street_Straight" && !foundLoop)
                 {
-                    DoSomethingHorizontal(x, y);
+                    DoSomethingHorizontalEverySecond(x, y);
                 }
 
                 if (selectedTilePrefab.GetComponent<Tile>().allowedLeft.Any(tile => tile.name == "Street_Straight (1)")
@@ -775,6 +775,7 @@ public class TileGridGenerator : MonoBehaviour
 
         //counter to keep track which segment of the street we are looking at
         int counter = 1;
+        SetSpecialTilesToCurrentTileSet();
         for (int i = x + 1; i < streetLength + 1 + x; i++) 
         {
             if(i >= gridSize){
@@ -872,7 +873,7 @@ public class TileGridGenerator : MonoBehaviour
             if(streetLength == counter){
                 cellGrid[x,i].possibleTiles.Add(street_straight1);
             }else{
-                street_straight1.GetComponent<Tile>().allowedRight = street_straight.GetComponent<Tile>().allowedLeft;
+                street_straight1.GetComponent<Tile>().allowedRight = street_straight1.GetComponent<Tile>().allowedLeft;
                 cellGrid[x,i].possibleTiles.Add(street_straight1);
             }
 
