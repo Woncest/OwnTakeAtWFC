@@ -949,6 +949,7 @@ public class TileGridGenerator : MonoBehaviour
             DoSomethingVerticalEverySecond(x,y);
         }else{
             int counter = 3;
+            SetSpecialTilesToCurrentTileSet();
             for (int i = y + 3; i < streetLength + 1 + y; i++) 
             {
                 if(i >= gridSize){
