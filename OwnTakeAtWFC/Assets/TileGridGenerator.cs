@@ -491,6 +491,7 @@ public class TileGridGenerator : MonoBehaviour
         {
             for (int x = 0; x < gridSize; x++)
             {
+                if(cellGrid[x, y].instantiatedTile != null && cellGrid[x,y].instantiatedTile.gameObject.name.Contains("Street_Straight (1)")) continue;
                 // Destroy the instantiated tile if it exists
                 if (cellGrid[x, y].instantiatedTile != null)
                 {
@@ -876,7 +877,7 @@ public class TileGridGenerator : MonoBehaviour
             }
             
             if(cellGrid[x, i].tileSet){
-            UnityEngine.Debug.LogError("Should be empty ?" + cellGrid[i, y].instantiatedTile.name);
+            UnityEngine.Debug.LogError("Should be empty ?" + cellGrid[x, i].instantiatedTile.name);
             break;
             }
 
@@ -913,7 +914,7 @@ public class TileGridGenerator : MonoBehaviour
             }
             
             if(cellGrid[x, i].tileSet){
-            UnityEngine.Debug.LogError("Should be empty ?" + cellGrid[i, y].instantiatedTile.name);
+            UnityEngine.Debug.Log("Should be empty ?" + cellGrid[x, i].instantiatedTile.name);
             break;
             }
 
@@ -962,7 +963,7 @@ public class TileGridGenerator : MonoBehaviour
                 }
                 
                 if(cellGrid[x, i].tileSet){
-                UnityEngine.Debug.LogError("Should be empty ?" + cellGrid[i, y].instantiatedTile.name);
+                UnityEngine.Debug.LogError("Should be empty ?" + cellGrid[x, i].instantiatedTile.name);
                 break;
                 }
 
@@ -1200,7 +1201,7 @@ public class TileGridGenerator : MonoBehaviour
                     }
                 }
                 if(!cut){
-                    UnityEngine.Debug.Log("Fuck you loop found");
+                    UnityEngine.Debug.Log("Fuck you loop found x: " + x + " y: " + y);
                     return true;
                 }
             }
