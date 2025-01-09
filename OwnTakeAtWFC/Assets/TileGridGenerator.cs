@@ -819,51 +819,52 @@ public class TileGridGenerator : MonoBehaviour
         //Set the horizontal Line (currently fix 3 long) Number - 1 == the length (ex. 1 < 4 + y == 3)
         //counter to keep track which segment of the street we are looking at
 
-        if(streetLength >= 2){
+        if(streetLength <= 2){
             DoSomethingHorizontalEverySecond(x,y);
             return;
-        }
-
-        int counter = 1;
-        SetSpecialTilesToCurrentTileSet();
-        for (int i = x + 1; i < streetLength + 1 + x; i++) 
-        {
-            if(i >= gridSize){
-                break;
-            }
-
-            if(counter%2 != 0){
-                counter++;
-                continue;
-            }
-
-            if(cellGrid[i, y].tileSet){
-                UnityEngine.Debug.LogError("Should be empty ? " + cellGrid[i, y].instantiatedTile.name);
-                break;
-            }
-
-            //Go into the special tile and set the sides to what this tileset would allow in the not forced directions
-            cellGrid[i,y].possibleTiles.Clear();
-            if(streetLength == counter){
-                cellGrid[i,y].possibleTiles.Add(street_straight);
-            }else{
-                street_straight.GetComponent<Tile>().allowedAbove = street_straight.GetComponent<Tile>().allowedBelow;
-                cellGrid[i,y].possibleTiles.Add(street_straight);
-            }
-            
-            // Set the selected tile on the cell
-            cellGrid[i, y].SetTile(cellGrid[i, y].possibleTiles.First());
-
-            // Proceed with setting neighbors and instantiating the tile
-            SetNeighboursHorizontally(i, y);
-
-            // Instantiate the selected tile at the grid position
-            Vector3 position = new Vector3(i, 0, y);
-            cellGrid[i, y].instantiatedTile = Instantiate(cellGrid[i, y].possibleTiles.First(), position, Quaternion.identity);
-
-            GoThroughEverything();
+        }else{
+            int counter = 3;
             SetSpecialTilesToCurrentTileSet();
-            counter++;
+            for (int i = x + 3; i < streetLength + 1 + x; i++) 
+            {
+                if(i >= gridSize){
+                    break;
+                }
+
+                if(counter%2 == 0){
+                    counter++;
+                    continue;
+                }
+
+                if(cellGrid[i, y].tileSet){
+                    UnityEngine.Debug.LogError("Should be empty ? " + cellGrid[i, y].instantiatedTile.name);
+                    break;
+                }
+
+                //Go into the special tile and set the sides to what this tileset would allow in the not forced directions
+                cellGrid[i,y].possibleTiles.Clear();
+                if(streetLength == counter){
+                    cellGrid[i,y].possibleTiles.Add(street_straight);
+                }else{
+                    street_straight.GetComponent<Tile>().allowedAbove = street_straight.GetComponent<Tile>().allowedBelow;
+                    cellGrid[i,y].possibleTiles.Add(street_straight);
+                }
+                
+                // Set the selected tile on the cell
+                cellGrid[i, y].SetTile(cellGrid[i, y].possibleTiles.First());
+
+                // Proceed with setting neighbors and instantiating the tile
+                SetNeighboursHorizontally(i, y);
+
+                // Instantiate the selected tile at the grid position
+                Vector3 position = new Vector3(i, 0, y);
+                cellGrid[i, y].instantiatedTile = Instantiate(cellGrid[i, y].possibleTiles.First(), position, Quaternion.identity);
+
+                GoThroughEverything();
+
+                SetSpecialTilesToCurrentTileSet();
+                counter++;
+            }
         }
     }
 
