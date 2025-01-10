@@ -820,7 +820,8 @@ public class TileGridGenerator : MonoBehaviour
         //Set the horizontal Line (currently fix 3 long) Number - 1 == the length (ex. 1 < 4 + y == 3)
         //counter to keep track which segment of the street we are looking at
 
-        if(streetLength <= 2){
+        //TODO should also lookout if you are too near the edge
+        if(streetLength <= 2 || x + 2 == gridSize - 1 || y + 2 == gridSize - 1){
             DoSomethingHorizontalEverySecond(x,y);
         }else{
             int counter = 3;
@@ -946,7 +947,7 @@ public class TileGridGenerator : MonoBehaviour
     private void DoSomethingVerticalEverySecond1Space(int x, int y){
         //Set the vertical Line (currently fix 3 long) Number - 1 == the length (ex. 1 < 4 + y == 3)
 
-        if(streetLength <= 2){
+        if(streetLength <= 2 || x + 2 == gridSize - 1 || y + 2 == gridSize - 1){
             DoSomethingVerticalEverySecond(x,y);
         }else{
             int counter = 3;
