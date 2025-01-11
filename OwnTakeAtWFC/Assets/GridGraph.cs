@@ -58,16 +58,33 @@ public class GridGraph : MonoBehaviour
                 // Skip nodes that are already empty or streets
                 if (nodeStates[x, z] != NodeState.Filled) continue;
 
-                // Randomly determine the size of the block (width and height)
-                int blockWidth = Random.Range(minBlockSize, maxBlockSize + 1);
-                int blockHeight = Random.Range(minBlockSize, maxBlockSize + 1);
+                // Attempt to place a block
+                PlaceRandomSizedBlock(x, z);
+            }
+        }
+    }
 
-                // Check if the block can be created at the current position
-                if (CanCreateBlock(x, z, blockWidth, blockHeight))
-                {
-                    // Create the block
-                    CreateEmptyBlock(x, z, blockWidth, blockHeight);
-                }
+    void PlaceRandomSizedBlock(int startX, int startZ)
+    {
+        int blockWidth = Random.Range(minBlockSize, maxBlockSize + 1);
+        int blockHeight = Random.Range(minBlockSize, maxBlockSize + 1);
+
+        while (blockWidth >= minBlockSize && blockHeight >= minBlockSize)
+        {
+            if (CanCreateBlock(startX, startZ, blockWidth, blockHeight))
+            {
+                CreateEmptyBlock(startX, startZ, blockWidth, blockHeight);
+                return;
+            }
+
+            // Shrink the block size
+            if (blockWidth > blockHeight)
+            {
+                blockWidth--;
+            }
+            else
+            {
+                blockHeight--;
             }
         }
     }
@@ -91,19 +108,23 @@ public class GridGraph : MonoBehaviour
 
     void CreateEmptyBlock(int startX, int startZ, int blockWidth, int blockHeight)
     {
+        // Adjust block size to ensure it doesn't exceed grid bounds
+        int adjustedWidth = Mathf.Min(blockWidth, gridSizeX - startX);
+        int adjustedHeight = Mathf.Min(blockHeight, gridSizeY - startZ);
+
         // Mark the block as empty
-        for (int x = startX; x < startX + blockWidth && x < gridSizeX; x++)
+        for (int x = startX; x < startX + adjustedWidth && x < gridSizeX; x++)
         {
-            for (int z = startZ; z < startZ + blockHeight && z < gridSizeY; z++)
+            for (int z = startZ; z < startZ + adjustedHeight && z < gridSizeY; z++)
             {
                 nodeStates[x, z] = NodeState.Empty;
             }
         }
 
         // Mark adjacent nodes (including diagonals) as streets
-        for (int x = startX - 1; x <= startX + blockWidth; x++)
+        for (int x = startX - 1; x <= startX + adjustedWidth; x++)
         {
-            for (int z = startZ - 1; z <= startZ + blockHeight; z++)
+            for (int z = startZ - 1; z <= startZ + adjustedHeight; z++)
             {
                 if (x >= 0 && x < gridSizeX && z >= 0 && z < gridSizeY)
                 {
