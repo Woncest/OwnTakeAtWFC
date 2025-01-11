@@ -8,18 +8,26 @@ public class GridGraph : MonoBehaviour
     public float nodeSpacing = 1.5f; // Distance between nodes
     public float nodeRadius = 0.2f; // Radius of the node circles
     public Color nodeColor = Color.blue; // Color of the node circles
+    public Color streetColor = Color.gray; // Color of the street nodes
     public Color edgeColor = Color.green; // Color of the set edges
-    public int numEmptyBlocks = 5; // Number of 2x2 blocks to free up
 
     private Vector3[,] gridPositions; // Stores the positions of all nodes
+    private NodeState[,] nodeStates; // States of each node in the grid
     private List<(Vector3, Vector3)> edges = new List<(Vector3, Vector3)>(); // List of set edges
-    private bool[,] isNodeEmpty; // To track which nodes are empty
+
+    // Enum for the states of nodes
+    private enum NodeState
+    {
+        Filled, // Node is part of the grid
+        Empty,  // Node is part of an empty space
+        Street  // Node is part of a street (adjacent to empty space)
+    }
 
     void Start()
     {
-        // Initialize the grid positions
+        // Initialize the grid positions and node states
         gridPositions = new Vector3[gridSizeX, gridSizeY];
-        isNodeEmpty = new bool[gridSizeX, gridSizeY];
+        nodeStates = new NodeState[gridSizeX, gridSizeY];
 
         for (int x = 0; x < gridSizeX; x++)
         {
@@ -28,14 +36,57 @@ public class GridGraph : MonoBehaviour
                 // Calculate position based on grid size and spacing
                 Vector3 position = new Vector3(x * nodeSpacing, 0, z * nodeSpacing);
                 gridPositions[x, z] = position;
+                nodeStates[x, z] = NodeState.Filled; // Initialize all nodes as filled
             }
         }
 
-        // Randomly remove 2x2 blocks of nodes and mark them as empty
-        RemoveRandom2x2Blocks(numEmptyBlocks);
+        // Create empty spaces and mark adjacent nodes as streets
+        CreateEmptySpaces();
 
         // Create edges for each node based on cardinal directions
         CreateEdgesForAllNodes();
+    }
+
+    void CreateEmptySpaces()
+    {
+        for (int x = 0; x < gridSizeX; x++)
+        {
+            for (int z = 0; z < gridSizeY; z++)
+            {
+                // Skip nodes that are already empty or streets
+                if (nodeStates[x, z] != NodeState.Filled) continue;
+
+                // Create an empty space
+                CreateEmptyBlock(x, z);
+            }
+        }
+    }
+
+    void CreateEmptyBlock(int startX, int startZ)
+    {
+        // Mark a 2x2 block as empty
+        for (int x = startX; x < startX + 2 && x < gridSizeX; x++)
+        {
+            for (int z = startZ; z < startZ + 2 && z < gridSizeY; z++)
+            {
+                nodeStates[x, z] = NodeState.Empty;
+            }
+        }
+
+        // Mark adjacent nodes (including diagonals) as streets
+        for (int x = startX - 1; x <= startX + 2; x++)
+        {
+            for (int z = startZ - 1; z <= startZ + 2; z++)
+            {
+                if (x >= 0 && x < gridSizeX && z >= 0 && z < gridSizeY)
+                {
+                    if (nodeStates[x, z] == NodeState.Filled)
+                    {
+                        nodeStates[x, z] = NodeState.Street;
+                    }
+                }
+            }
+        }
     }
 
     void CreateEdgesForAllNodes()
@@ -47,7 +98,7 @@ public class GridGraph : MonoBehaviour
                 Vector3 currentNode = gridPositions[x, z];
 
                 // Skip creating edges for empty nodes
-                if (isNodeEmpty[x, z]) continue;
+                if (nodeStates[x, z] == NodeState.Empty) continue;
 
                 // Get all neighbors for this node (up, down, left, right)
                 List<Vector3> neighbors = GetNeighbors(x, z);
@@ -57,29 +108,10 @@ public class GridGraph : MonoBehaviour
                     // Skip edges that would connect to empty nodes
                     int neighborX = (int)(neighbor.x / nodeSpacing);
                     int neighborZ = (int)(neighbor.z / nodeSpacing);
-                    if (isNodeEmpty[neighborX, neighborZ]) continue;
+                    if (nodeStates[neighborX, neighborZ] == NodeState.Empty) continue;
 
                     // Create an edge between the current node and the neighbor
                     edges.Add((currentNode, neighbor));
-                }
-            }
-        }
-    }
-
-    // Removes random 2x2 blocks of nodes and marks them as empty
-    void RemoveRandom2x2Blocks(int numberOfBlocks)
-    {
-        for (int i = 0; i < numberOfBlocks; i++)
-        {
-            int startX = Random.Range(0, gridSizeX - 1);
-            int startZ = Random.Range(0, gridSizeY - 1);
-
-            // Mark the 2x2 block as empty
-            for (int x = startX; x < startX + 2; x++)
-            {
-                for (int z = startZ; z < startZ + 2; z++)
-                {
-                    isNodeEmpty[x, z] = true;
                 }
             }
         }
@@ -109,15 +141,22 @@ public class GridGraph : MonoBehaviour
             return;
 
         // Draw nodes
-        Gizmos.color = nodeColor;
         for (int x = 0; x < gridSizeX; x++)
         {
             for (int z = 0; z < gridSizeY; z++)
             {
-                // Skip drawing empty nodes
-                if (isNodeEmpty[x, z]) continue;
+                Vector3 position = gridPositions[x, z];
 
-                Gizmos.DrawSphere(gridPositions[x, z], nodeRadius);
+                // Set Gizmos color based on node state
+                if (nodeStates[x, z] == NodeState.Empty)
+                    Gizmos.color = Color.red;
+                else if (nodeStates[x, z] == NodeState.Street)
+                    Gizmos.color = streetColor;
+                else
+                    Gizmos.color = nodeColor;
+
+                // Draw the node
+                Gizmos.DrawSphere(position, nodeRadius);
             }
         }
 
@@ -125,16 +164,7 @@ public class GridGraph : MonoBehaviour
         Gizmos.color = edgeColor;
         foreach (var edge in edges)
         {
-            // Only draw edges that connect non-empty nodes
-            int x1 = (int)(edge.Item1.x / nodeSpacing);
-            int z1 = (int)(edge.Item1.z / nodeSpacing);
-            int x2 = (int)(edge.Item2.x / nodeSpacing);
-            int z2 = (int)(edge.Item2.z / nodeSpacing);
-
-            if (!isNodeEmpty[x1, z1] && !isNodeEmpty[x2, z2])
-            {
-                Gizmos.DrawLine(edge.Item1, edge.Item2);
-            }
+            Gizmos.DrawLine(edge.Item1, edge.Item2);
         }
     }
 }
