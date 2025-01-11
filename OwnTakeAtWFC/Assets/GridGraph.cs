@@ -10,6 +10,8 @@ public class GridGraph : MonoBehaviour
     public Color nodeColor = Color.blue; // Color of the node circles
     public Color streetColor = Color.gray; // Color of the street nodes
     public Color edgeColor = Color.green; // Color of the set edges
+    public int minBlockSize = 2; // Minimum size of the block (e.g., 2x2)
+    public int maxBlockSize = 4; // Maximum size of the block (e.g., 4x4)
 
     private Vector3[,] gridPositions; // Stores the positions of all nodes
     private NodeState[,] nodeStates; // States of each node in the grid
@@ -56,27 +58,52 @@ public class GridGraph : MonoBehaviour
                 // Skip nodes that are already empty or streets
                 if (nodeStates[x, z] != NodeState.Filled) continue;
 
-                // Create an empty space
-                CreateEmptyBlock(x, z);
+                // Randomly determine the size of the block (width and height)
+                int blockWidth = Random.Range(minBlockSize, maxBlockSize + 1);
+                int blockHeight = Random.Range(minBlockSize, maxBlockSize + 1);
+
+                // Check if the block can be created at the current position
+                if (CanCreateBlock(x, z, blockWidth, blockHeight))
+                {
+                    // Create the block
+                    CreateEmptyBlock(x, z, blockWidth, blockHeight);
+                }
             }
         }
     }
 
-    void CreateEmptyBlock(int startX, int startZ)
+    bool CanCreateBlock(int startX, int startZ, int blockWidth, int blockHeight)
     {
-        // Mark a 2x2 block as empty
-        for (int x = startX; x < startX + 2 && x < gridSizeX; x++)
+        // Check if the block fits within the grid and doesn't overwrite existing streets or empty spaces
+        for (int x = startX; x < startX + blockWidth; x++)
         {
-            for (int z = startZ; z < startZ + 2 && z < gridSizeY; z++)
+            for (int z = startZ; z < startZ + blockHeight; z++)
+            {
+                // Check if the node is within bounds
+                if (x >= gridSizeX || z >= gridSizeY) return false;
+
+                // Check if the node is already empty or a street
+                if (nodeStates[x, z] != NodeState.Filled) return false;
+            }
+        }
+        return true;
+    }
+
+    void CreateEmptyBlock(int startX, int startZ, int blockWidth, int blockHeight)
+    {
+        // Mark the block as empty
+        for (int x = startX; x < startX + blockWidth && x < gridSizeX; x++)
+        {
+            for (int z = startZ; z < startZ + blockHeight && z < gridSizeY; z++)
             {
                 nodeStates[x, z] = NodeState.Empty;
             }
         }
 
         // Mark adjacent nodes (including diagonals) as streets
-        for (int x = startX - 1; x <= startX + 2; x++)
+        for (int x = startX - 1; x <= startX + blockWidth; x++)
         {
-            for (int z = startZ - 1; z <= startZ + 2; z++)
+            for (int z = startZ - 1; z <= startZ + blockHeight; z++)
             {
                 if (x >= 0 && x < gridSizeX && z >= 0 && z < gridSizeY)
                 {
