@@ -10,8 +10,6 @@ public class GridGraph : MonoBehaviour
     public Color nodeColor = Color.blue; // Color of the node circles
     public Color streetColor = Color.gray; // Color of the street nodes
     public Color edgeColor = Color.green; // Color of the set edges
-    public int minBlockSize = 2; // Minimum size of the block (e.g., 2x2)
-    public int maxBlockSize = 4; // Maximum size of the block (e.g., 4x4)
 
     private Vector3[,] gridPositions; // Stores the positions of all nodes
     private NodeState[,] nodeStates; // States of each node in the grid
@@ -58,35 +56,36 @@ public class GridGraph : MonoBehaviour
                 // Skip nodes that are already empty or streets
                 if (nodeStates[x, z] != NodeState.Filled) continue;
 
-                // Attempt to place a block
-                PlaceRandomSizedBlock(x, z);
+                // Attempt to create a 2x2 block with possible extensions
+                CreateFixedBlockWithExtensions(x, z);
             }
         }
     }
 
-    void PlaceRandomSizedBlock(int startX, int startZ)
+    void CreateFixedBlockWithExtensions(int startX, int startZ)
     {
-        int blockWidth = Random.Range(minBlockSize, maxBlockSize + 1);
-        int blockHeight = Random.Range(minBlockSize, maxBlockSize + 1);
+        // Start with a fixed 2x2 block
+        if (!CanCreateBlock(startX, startZ, 2, 2))
+            return;
 
-        while (blockWidth >= minBlockSize && blockHeight >= minBlockSize)
+        // Create the initial 2x2 block
+        int finalWidth = 2;
+        int finalHeight = 2;
+
+        // 1/3 chance to extend to the right
+        if (Random.value < 1f / 3f && CanCreateBlock(startX, startZ, 4, 2))
         {
-            if (CanCreateBlock(startX, startZ, blockWidth, blockHeight))
-            {
-                CreateEmptyBlock(startX, startZ, blockWidth, blockHeight);
-                return;
-            }
-
-            // Shrink the block size
-            if (blockWidth > blockHeight)
-            {
-                blockWidth--;
-            }
-            else
-            {
-                blockHeight--;
-            }
+            finalWidth = 4;
         }
+
+        // 1/3 chance to extend to the top
+        if (Random.value < 1f / 3f && CanCreateBlock(startX, startZ, finalWidth, 4))
+        {
+            finalHeight = 4;
+        }
+
+        // Mark the larger block as empty
+        CreateEmptyBlock(startX, startZ, finalWidth, finalHeight);
     }
 
     bool CanCreateBlock(int startX, int startZ, int blockWidth, int blockHeight)
