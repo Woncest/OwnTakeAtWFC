@@ -91,18 +91,18 @@ public class BlockGenerator : MonoBehaviour
 
         foreach (var edge in edges)
         {
-            if (Mathf.Abs(edge.Item1.y - edge.Item2.y) < 0.01f) // Horizontal edge
+            if (Mathf.Abs(edge.Item1.y - edge.Item2.y) < 0.01f && edge.Item1.y == 0) // Horizontal edge on y=0
             {
                 totalHorizontal += Vector3.Distance(edge.Item1, edge.Item2);
             }
-            else if (Mathf.Abs(edge.Item1.x - edge.Item2.x) < 0.01f) // Vertical edge
+            else if (Mathf.Abs(edge.Item1.x - edge.Item2.x) < 0.01f && edge.Item1.x == 0) // Vertical edge on x=0
             {
                 totalVertical += Vector3.Distance(edge.Item1, edge.Item2);
             }
         }
 
-        Debug.Log($"Total Horizontal Length (one side): {totalHorizontal}");
-        Debug.Log($"Total Vertical Length (one side): {totalVertical}");
+        Debug.Log($"Total Horizontal Length (y=0): {totalHorizontal}");
+        Debug.Log($"Total Vertical Length (x=0): {totalVertical}");
     }
 
     void OnDrawGizmos()
