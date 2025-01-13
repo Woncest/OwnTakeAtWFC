@@ -24,9 +24,32 @@ public class BlockGenerator : MonoBehaviour
         {
             for (int x = 0; x < gridWidth; x += defaultWidth)
             {
-                GenerateBlock(new Vector3(x, y, 0), defaultWidth, blockHeight);
+                // Check for potential extensions
+                bool canExtendRight = x + defaultWidth * 2 <= gridWidth && !BlockExists(new Vector3(x + defaultWidth, y, 0));
+                bool canExtendTop = y + this.blockHeight * 2 <= gridHeight && !BlockExists(new Vector3(x, y + this.blockHeight, 0));
+
+                // Randomly decide to extend the block if possible
+                bool extendRight = canExtendRight && Random.value > 0.5f; // 50% chance to extend right
+                bool extendTop = canExtendTop && Random.value > 0.5f;   // 50% chance to extend top
+
+                int blockWidth = extendRight ? defaultWidth * 2 : defaultWidth;
+                int blockHeight = extendTop ? this.blockHeight * 2 : this.blockHeight;
+
+                GenerateBlock(new Vector3(x, y, 0), blockWidth, blockHeight);
+
+                // Skip extra space for extended blocks
+                if (extendRight) x += defaultWidth;
             }
         }
+    }
+
+    bool BlockExists(Vector3 position)
+    {
+        // Check if a block already occupies this position
+        return nodes.Contains(position + new Vector3(0, blockHeight, 0)) ||
+               nodes.Contains(position + new Vector3(defaultWidth, blockHeight, 0)) ||
+               nodes.Contains(position) ||
+               nodes.Contains(position + new Vector3(defaultWidth, 0, 0));
     }
 
     void GenerateBlock(Vector3 position, int width, int height)
