@@ -24,8 +24,11 @@ public class TileGridGenerator : MonoBehaviour
 
     public GameObject street_straight1;
 
+    public ProbabilityInputFieldManager probabilities;
+
     void Start()
     {
+        SetProbabilities();
         InitializeCellGrid();
         GenerateAndTimeGrid();  // Modified method call
         newGridSize = gridSize;
@@ -43,6 +46,7 @@ public class TileGridGenerator : MonoBehaviour
             ClearGrid();
             gridSize = newGridSize;
             cameraZoomController.AdjustZoom();
+            SetProbabilities();
             InitializeCellGrid();
             GenerateAndTimeGrid();  // Modified method call
         }
@@ -1277,6 +1281,76 @@ public class TileGridGenerator : MonoBehaviour
         Left,
         Right,
         None
+    }
+
+    public void SetProbabilities()
+    {
+        // Local variables to store counts
+        int fourWayCount = 0;
+        int threeWayCount = 0;
+        int curveCount = 0;
+        int emptyCount = 0;
+        int streetStraightCount = 0;
+
+        // Iterate through the list of tilePrefabs
+        foreach (GameObject tile in tilePrefabs)
+        {
+            if (tile != null)
+            {
+                string tileName = tile.name;
+
+                // Check the name of the tile and increment the respective count
+                if (tileName.Contains("4Way"))
+                {
+                    fourWayCount++;
+                }
+                else if (tileName.Contains("3Way"))
+                {
+                    threeWayCount++;
+                }
+                else if (tileName.Contains("Curve"))
+                {
+                    curveCount++;
+                }
+                else if (tileName.Contains("Empty"))
+                {
+                    emptyCount++;
+                }
+                else if (tileName.Contains("Straight"))
+                {
+                    streetStraightCount++;
+                }
+            }
+        }
+
+        if(fourWayCount != probabilities.fourWay){
+            
+        }
+
+        if(threeWayCount/4 != probabilities.threeWay){
+
+        }
+
+        if(curveCount/4 != probabilities.curve){
+
+        }
+
+        if(emptyCount != probabilities.empty){
+
+        }
+
+        if(streetStraightCount/2 != probabilities.streetStraight){
+
+        }
+
+        // Log the results to the console for debugging purposes
+        UnityEngine.Debug.Log($"4Way Count: {fourWayCount}");
+        UnityEngine.Debug.Log($"3Way Count: {threeWayCount}");
+        UnityEngine.Debug.Log($"Curve Count: {curveCount}");
+        UnityEngine.Debug.Log($"Empty Count: {emptyCount}");
+        UnityEngine.Debug.Log($"StreetStraight Count: {streetStraightCount}");
+        
+        // Use the counts here or return them from the function if needed
     }
 
 
