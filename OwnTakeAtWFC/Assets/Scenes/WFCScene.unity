@@ -8981,6 +8981,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1117651919}
   - component: {fileID: 1117651920}
+  - component: {fileID: 1117651921}
   m_Layer: 5
   m_Name: Probabilities
   m_TagString: Untagged
@@ -9036,6 +9037,29 @@ MonoBehaviour:
   m_Spacing: {x: 0, y: 5}
   m_Constraint: 0
   m_ConstraintCount: 2
+--- !u!114 &1117651921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1117651918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ef6d8a30f48dc34996f24e2454a18f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputFields:
+  - {fileID: 1276787306}
+  - {fileID: 1601663465}
+  - {fileID: 1189648015}
+  - {fileID: 796197733}
+  - {fileID: 671668990}
+  fourWay: 0
+  threeWay: 0
+  curve: 0
+  empty: 0
+  streetStraight: 0
 --- !u!1 &1140332585
 GameObject:
   m_ObjectHideFlags: 0
