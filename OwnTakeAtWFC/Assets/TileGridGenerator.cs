@@ -1324,7 +1324,8 @@ public class TileGridGenerator : MonoBehaviour
         }
 
         if(fourWayCount != probabilities.fourWay){
-            
+            GameObject fourWayTile = tilePrefabs.Find(tile => tile.name.Contains("4Way"));
+            AdjustInstances(fourWayTile, probabilities.fourWay);
         }
 
         if(threeWayCount/4 != probabilities.threeWay){
@@ -1351,6 +1352,44 @@ public class TileGridGenerator : MonoBehaviour
         UnityEngine.Debug.Log($"StreetStraight Count: {streetStraightCount}");
         
         // Use the counts here or return them from the function if needed
+    }
+
+    void AdjustInstances(GameObject targetObject, int targetCount)
+    {
+        // Count how many instances currently exist
+        int currentCount = CountInstances(targetObject);
+
+        if (currentCount < targetCount)
+        {
+            // Add more instances if there are too few
+            int instancesToAdd = targetCount - currentCount;
+            for (int i = 0; i < instancesToAdd; i++)
+            {
+                tilePrefabs.Add(targetObject);
+            }
+        }
+        else if (currentCount > targetCount)
+        {
+            // Remove extra instances if there are too many
+            int instancesToRemove = currentCount - targetCount;
+            for (int i = 0; i < instancesToRemove; i++)
+            {
+                tilePrefabs.Remove(targetObject);
+            }
+        }
+    }
+
+    int CountInstances(GameObject targetObject)
+    {
+        int count = 0;
+        foreach (GameObject obj in tilePrefabs)
+        {
+            if (obj == targetObject)
+            {
+                count++;
+            }
+        }
+        return count;
     }
 
 
