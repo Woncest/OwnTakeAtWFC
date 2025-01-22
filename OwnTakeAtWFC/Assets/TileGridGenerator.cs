@@ -1337,21 +1337,13 @@ public class TileGridGenerator : MonoBehaviour
         }
 
         if(emptyCount != probabilities.empty){
-
+            GameObject emptyTile = tilePrefabs.Find(tile => tile.name.Contains("Empty"));
+            AdjustInstances(emptyTile, probabilities.empty);
         }
 
         if(streetStraightCount/2 != probabilities.streetStraight){
 
         }
-
-        // Log the results to the console for debugging purposes
-        UnityEngine.Debug.Log($"4Way Count: {fourWayCount}");
-        UnityEngine.Debug.Log($"3Way Count: {threeWayCount}");
-        UnityEngine.Debug.Log($"Curve Count: {curveCount}");
-        UnityEngine.Debug.Log($"Empty Count: {emptyCount}");
-        UnityEngine.Debug.Log($"StreetStraight Count: {streetStraightCount}");
-        
-        // Use the counts here or return them from the function if needed
     }
 
     void AdjustInstances(GameObject targetObject, int targetCount)
