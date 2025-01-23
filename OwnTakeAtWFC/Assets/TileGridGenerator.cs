@@ -1336,7 +1336,10 @@ public class TileGridGenerator : MonoBehaviour
         }
 
         if(curveCount/4 != probabilities.curve){
-
+            List<GameObject> uniqueCurveTiles = GetUniqueGameObjectsByName(tilePrefabs, "Curve");
+            foreach (GameObject tile in uniqueCurveTiles){
+                AdjustInstances(tile, probabilities.curve);
+            }
         }
 
         if(emptyCount != probabilities.empty){
@@ -1345,7 +1348,10 @@ public class TileGridGenerator : MonoBehaviour
         }
 
         if(streetStraightCount/2 != probabilities.streetStraight){
-
+            List<GameObject> uniqueStraightTiles = GetUniqueGameObjectsByName(tilePrefabs, "Straight");
+            foreach (GameObject tile in uniqueStraightTiles){
+                AdjustInstances(tile, probabilities.streetStraight);
+            }
         }
     }
 
