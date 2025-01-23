@@ -1329,7 +1329,10 @@ public class TileGridGenerator : MonoBehaviour
         }
 
         if(threeWayCount/4 != probabilities.threeWay){
-
+            List<GameObject> uniqueThreeWayTiles = GetUniqueGameObjectsByName(tilePrefabs, "3Way");
+            foreach (GameObject tile in uniqueThreeWayTiles){
+                AdjustInstances(tile, probabilities.threeWay);
+            }
         }
 
         if(curveCount/4 != probabilities.curve){
@@ -1382,6 +1385,23 @@ public class TileGridGenerator : MonoBehaviour
             }
         }
         return count;
+    }
+
+    List<GameObject> GetUniqueGameObjectsByName(List<GameObject> gameObjects, string substring)
+    {
+        // Use a HashSet to ensure uniqueness
+        HashSet<GameObject> uniqueObjects = new HashSet<GameObject>();
+
+        foreach (GameObject obj in gameObjects)
+        {
+            if (obj.name.Contains(substring))
+            {
+                uniqueObjects.Add(obj);
+            }
+        }
+
+        // Convert the HashSet back to a List
+        return new List<GameObject>(uniqueObjects);
     }
 
 
