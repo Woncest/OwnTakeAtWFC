@@ -7,9 +7,9 @@ using System.Text.RegularExpressions;
 
 public class TileGridGenerator : MonoBehaviour
 {
-    public int gridSize = 5;  // Size of the grid (gridSize x gridSize)
+    public int gridSize = 25;  // Size of the grid (gridSize x gridSize)
 
-    [HideInInspector] public int newGridSize = 5;
+    [HideInInspector] public int newGridSize = 25;
     public CameraZoomController cameraZoomController;
     public List<GameObject> tilePrefabs;  // Array of tile prefabs to choose from
     public bool showGenerationProcess = true;  // New boolean to control visual generation
@@ -26,11 +26,16 @@ public class TileGridGenerator : MonoBehaviour
 
     public ProbabilityInputFieldManager probabilities;
 
+    public float cellSize = 1.0f;
+
+    public Color lineColor = Color.black;
+
     void Start()
     {
         SetProbabilities();
         InitializeCellGrid();
-        GenerateAndTimeGrid();  // Modified method call
+        //GenerateAndTimeGrid();  // Modified method call
+        GenerateGridVisual();
         newGridSize = gridSize;
     }
 
@@ -1410,6 +1415,78 @@ public class TileGridGenerator : MonoBehaviour
         return new List<GameObject>(uniqueObjects);
     }
 
+    /// <summary>
+    /// Generates a grid where each cell's center aligns with the grid coordinates.
+    /// </summary>
+    void GenerateGridVisual()
+    {
+        // Create a parent GameObject to organize the grid lines in the hierarchy
+        GameObject gridParent = new GameObject("CellGrid");
 
+        for (int x = 0; x < gridSize; x++)
+        {
+            for (int y = 0; y < gridSize; y++)
+            {
+                // Adjust the origin so the center of each cell matches the grid coordinate
+                Vector3 cellCenter = new Vector3(x, 0, y);
+                Vector3 cellOrigin = cellCenter - new Vector3(cellSize / 2, 0, cellSize / 2); // Offset to get bottom-left corner
+                DrawCell(cellOrigin, gridParent.transform);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Draws a single cell with borders using LineRenderers.
+    /// </summary>
+    /// <param name="origin">The bottom-left corner of the cell.</param>
+    /// <param name="parent">The parent transform for organizing the lines in the hierarchy.</param>
+    void DrawCell(Vector3 origin, Transform parent)
+    {
+        // Define the four corners of the cell
+        Vector3 topLeft = origin + new Vector3(0, 0, cellSize);
+        Vector3 topRight = origin + new Vector3(cellSize, 0, cellSize);
+        Vector3 bottomRight = origin + new Vector3(cellSize, 0, 0);
+        Vector3 bottomLeft = origin;
+
+        // Create an empty GameObject to hold the line renderers for this cell
+        GameObject cell = new GameObject($"Cell_{origin.x}_{origin.z}");
+        cell.transform.parent = parent;
+
+        // Draw the four borders of the cell
+        DrawLine(bottomLeft, bottomRight, cell.transform); // Bottom
+        DrawLine(bottomRight, topRight, cell.transform);   // Right
+        DrawLine(topRight, topLeft, cell.transform);       // Top
+        DrawLine(topLeft, bottomLeft, cell.transform);     // Left
+    }
+
+    /// <summary>
+    /// Draws a single line using a LineRenderer.
+    /// </summary>
+    /// <param name="start">The starting point of the line.</param>
+    /// <param name="end">The ending point of the line.</param>
+    /// <param name="parent">The parent transform for organizing the line in the hierarchy.</param>
+    void DrawLine(Vector3 start, Vector3 end, Transform parent)
+    {
+        // Create a new GameObject for the line
+        GameObject lineObject = new GameObject("Line");
+        lineObject.transform.parent = parent;
+
+        // Add a LineRenderer component
+        LineRenderer lineRenderer = lineObject.AddComponent<LineRenderer>();
+        lineRenderer.material = new Material(Shader.Find("Sprites/Default")); // Use a default material
+        lineRenderer.startColor = lineColor;
+        lineRenderer.endColor = lineColor;
+        lineRenderer.startWidth = 0.05f;
+        lineRenderer.endWidth = 0.05f;
+
+        // Set the positions of the line
+        lineRenderer.positionCount = 2;
+        lineRenderer.SetPosition(0, start);
+        lineRenderer.SetPosition(1, end);
+
+        // Prevent the line from casting or receiving shadows
+        lineRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        lineRenderer.receiveShadows = false;
+    }
 
 }
