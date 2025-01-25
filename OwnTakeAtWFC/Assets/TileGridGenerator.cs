@@ -1416,47 +1416,58 @@ public class TileGridGenerator : MonoBehaviour
     }
 
     /// <summary>
-    /// Generates a grid where each cell's center aligns with the grid coordinates.
+    /// Generates a grid with clickable cells, each showing its coordinates when clicked.
     /// </summary>
     void GenerateGridVisual()
     {
-        // Create a parent GameObject to organize the grid lines in the hierarchy
-        GameObject gridParent = new GameObject("CellGrid");
+        // Create a parent GameObject to organize the grid lines and cells
+        GameObject gridParent = new GameObject("ClickableCellGrid");
 
         for (int x = 0; x < gridSize; x++)
         {
             for (int y = 0; y < gridSize; y++)
             {
-                // Adjust the origin so the center of each cell matches the grid coordinate
+                // Calculate the center of the cell
                 Vector3 cellCenter = new Vector3(x, 0, y);
-                Vector3 cellOrigin = cellCenter - new Vector3(cellSize / 2, 0, cellSize / 2); // Offset to get bottom-left corner
-                DrawCell(cellOrigin, gridParent.transform);
+
+                // Create the cell GameObject
+                GameObject cell = new GameObject($"Cell_{x}_{y}");
+                cell.transform.position = cellCenter;
+                cell.transform.parent = gridParent.transform;
+
+                // Add a collider for click detection
+                BoxCollider collider = cell.AddComponent<BoxCollider>();
+                collider.size = new Vector3(cellSize, 0.1f, cellSize); // Thin collider over the cell
+
+                // Add a CellClickHandler to handle click events
+                CellClickHandler clickHandler = cell.AddComponent<CellClickHandler>();
+                clickHandler.coordinates = new Vector2Int(x, y);
+
+                // Draw the cell's borders
+                DrawCell(cellCenter, cell.transform);
             }
         }
     }
 
     /// <summary>
-    /// Draws a single cell with borders using LineRenderers.
+    /// Draws a single cell's border using LineRenderers.
     /// </summary>
-    /// <param name="origin">The bottom-left corner of the cell.</param>
+    /// <param name="center">The center of the cell.</param>
     /// <param name="parent">The parent transform for organizing the lines in the hierarchy.</param>
-    void DrawCell(Vector3 origin, Transform parent)
+    void DrawCell(Vector3 center, Transform parent)
     {
-        // Define the four corners of the cell
-        Vector3 topLeft = origin + new Vector3(0, 0, cellSize);
-        Vector3 topRight = origin + new Vector3(cellSize, 0, cellSize);
-        Vector3 bottomRight = origin + new Vector3(cellSize, 0, 0);
-        Vector3 bottomLeft = origin;
-
-        // Create an empty GameObject to hold the line renderers for this cell
-        GameObject cell = new GameObject($"Cell_{origin.x}_{origin.z}");
-        cell.transform.parent = parent;
+        // Calculate the corners of the cell based on its center
+        float halfCellSize = cellSize / 2;
+        Vector3 bottomLeft = center - new Vector3(halfCellSize, 0, halfCellSize);
+        Vector3 bottomRight = center + new Vector3(halfCellSize, 0, -halfCellSize);
+        Vector3 topRight = center + new Vector3(halfCellSize, 0, halfCellSize);
+        Vector3 topLeft = center + new Vector3(-halfCellSize, 0, halfCellSize);
 
         // Draw the four borders of the cell
-        DrawLine(bottomLeft, bottomRight, cell.transform); // Bottom
-        DrawLine(bottomRight, topRight, cell.transform);   // Right
-        DrawLine(topRight, topLeft, cell.transform);       // Top
-        DrawLine(topLeft, bottomLeft, cell.transform);     // Left
+        DrawLine(bottomLeft, bottomRight, parent); // Bottom
+        DrawLine(bottomRight, topRight, parent);   // Right
+        DrawLine(topRight, topLeft, parent);       // Top
+        DrawLine(topLeft, bottomLeft, parent);     // Left
     }
 
     /// <summary>
