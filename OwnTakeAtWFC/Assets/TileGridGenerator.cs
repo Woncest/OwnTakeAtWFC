@@ -1560,9 +1560,8 @@ public class TileGridGenerator : MonoBehaviour
         if (gridParent != null)
         {
             Destroy(gridParent); // Deletes all cells and grid lines
+            UnityEngine.Debug.Log("Grid interaction disabled. Only instantiated tiles remain.");
         }
-
-        UnityEngine.Debug.Log("Grid interaction disabled. Only instantiated tiles remain.");
     }
 
 }
