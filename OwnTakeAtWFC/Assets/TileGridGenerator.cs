@@ -52,7 +52,8 @@ public class TileGridGenerator : MonoBehaviour
             gridSize = newGridSize;
             cameraZoomController.AdjustZoom();
             SetProbabilities();
-            InitializeCellGrid();
+            //InitializeCellGrid();
+            DisableGridInteraction();
             GenerateAndTimeGrid();  // Modified method call
         }
     }
@@ -67,7 +68,7 @@ public class TileGridGenerator : MonoBehaviour
         {
             for (int x = 0; x < gridSize; x++)
             {
-                // Create a new Cell at the current grid position with all possible tiles
+                // Create a new Cell at the current grid position with all possible tiles 
                 cellGrid[x, y] = new Cell(tilePrefabs);
             }
         }
@@ -481,6 +482,7 @@ public class TileGridGenerator : MonoBehaviour
         {
             for (int x = 0; x < gridSize; x++)
             {
+                if(cellGrid[x, y].forced) continue;
                 // Destroy the instantiated tile if it exists
                 if (cellGrid[x, y].instantiatedTile != null)
                 {
@@ -1415,13 +1417,16 @@ public class TileGridGenerator : MonoBehaviour
         return new List<GameObject>(uniqueObjects);
     }
 
+    private GameObject[,] instantiatedTiles; // A 2D array to track instantiated tiles
+    private GameObject gridParent; // Parent object for cells and grid lines
     /// <summary>
-    /// Generates a grid with clickable cells, each showing its coordinates when clicked.
+    /// Generates the grid with clickable cells.
     /// </summary>
     void GenerateGridVisual()
     {
         // Create a parent GameObject to organize the grid lines and cells
-        GameObject gridParent = new GameObject("ClickableCellGrid");
+        instantiatedTiles = new GameObject[gridSize, gridSize];
+        gridParent = new GameObject("ClickableCellGrid");
 
         for (int x = 0; x < gridSize; x++)
         {
@@ -1441,7 +1446,9 @@ public class TileGridGenerator : MonoBehaviour
 
                 // Add a CellClickHandler to handle click events
                 CellClickHandler clickHandler = cell.AddComponent<CellClickHandler>();
-                clickHandler.coordinates = new Vector2Int(x, y);
+                clickHandler.gridX = x;
+                clickHandler.gridY = y;
+                clickHandler.grid = this; // Pass a reference to the main grid
 
                 // Draw the cell's borders
                 DrawCell(cellCenter, cell.transform);
@@ -1498,6 +1505,64 @@ public class TileGridGenerator : MonoBehaviour
         // Prevent the line from casting or receiving shadows
         lineRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         lineRenderer.receiveShadows = false;
+    }
+
+    /// <summary>
+    /// Handles the click on a cell to place, replace, or delete tiles.
+    /// </summary>
+    /// <param name="x">The x-coordinate of the cell.</param>
+    /// <param name="y">The y-coordinate of the cell.</param>
+    /// <param name="isRightClick">Whether the click was a right-click.</param>
+    public void HandleCellClick(int x, int y, bool isRightClick)
+    {
+        if (isRightClick)
+        {
+            // If right-click, delete the tile if one exists
+            if (instantiatedTiles[x, y] != null)
+            {
+                Destroy(instantiatedTiles[x, y]);
+                instantiatedTiles[x, y] = null;
+                cellGrid[x, y].possibleTiles = new List<GameObject>(tilePrefabs);
+                cellGrid[x, y].instantiatedTile = null;  // Clear reference to the instantiated tile
+                cellGrid[x, y].tileSet = false;
+                cellGrid[x, y].forced = false;
+                UnityEngine.Debug.Log($"Deleted tile at cell ({x}, {y})");
+            }
+        }
+        else
+        {
+            // If left-click, instantiate or replace the tile
+            if (TileManager.Instance.currentTile == null)
+            {
+                UnityEngine.Debug.Log("No tile selected to place.");
+                return;
+            }
+
+            if (instantiatedTiles[x, y] != null)
+            {
+                Destroy(instantiatedTiles[x, y]); // Replace existing tile
+            }
+
+            Vector3 spawnPosition = new Vector3(x, 0, y);
+            instantiatedTiles[x, y] = Instantiate(TileManager.Instance.currentTile, spawnPosition, Quaternion.identity);
+            cellGrid[x, y].possibleTiles.RemoveAll(tile => tile != TileManager.Instance.currentTile);
+            cellGrid[x, y].SetTile(TileManager.Instance.currentTile);
+            cellGrid[x, y].forced = true;
+            UnityEngine.Debug.Log($"Placed tile at cell ({x}, {y})");
+        }
+    }
+
+    /// <summary>
+    /// Disables clicking and removes all grid lines and cells, leaving only instantiated tiles.
+    /// </summary>
+    public void DisableGridInteraction()
+    {
+        if (gridParent != null)
+        {
+            Destroy(gridParent); // Deletes all cells and grid lines
+        }
+
+        UnityEngine.Debug.Log("Grid interaction disabled. Only instantiated tiles remain.");
     }
 
 }

@@ -2,11 +2,19 @@ using UnityEngine;
 
 public class CellClickHandler : MonoBehaviour
 {
-    public Vector2Int coordinates; // The grid coordinates of this cell
+    public int gridX; // The x-coordinate of this cell
+    public int gridY; // The y-coordinate of this cell
+    public TileGridGenerator grid; // Reference to the main grid
 
-    void OnMouseDown()
+    void OnMouseOver()
     {
-        // Display the cell's coordinates when clicked
-        Debug.Log($"Cell clicked at coordinates: {coordinates}");
+        if (Input.GetMouseButtonDown(0)) // Left-click
+        {
+            grid.HandleCellClick(gridX, gridY, isRightClick: false);
+        }
+        else if (Input.GetMouseButtonDown(1)) // Right-click
+        {
+            grid.HandleCellClick(gridX, gridY, isRightClick: true);
+        }
     }
 }
