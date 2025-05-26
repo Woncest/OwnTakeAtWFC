@@ -1,39 +1,33 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class Cell
 {
-    public List<GameObject> possibleTiles;
+    public List<GameObject> possibleTiles;    // Possible tiles that can be placed in this cell
+    public List<GameObject> notChosenTiles;   // Tiles that were not chosen
+    public GameObject instantiatedTile;       // The tile that has been instantiated in this cell
+    public bool tileSet = false;
+    public bool forced = false;
 
-    public Cell(GameObject[] allTiles)
+    public Cell(List<GameObject> tiles)
     {
-        // Initially, the cell can hold any tile
-        possibleTiles = new List<GameObject>(allTiles);
+        possibleTiles = new List<GameObject>(tiles);
+        notChosenTiles = new List<GameObject>(tiles);  // Initialize with all tiles as not chosen
+        instantiatedTile = null;  // Initially, no tile is instantiated
     }
 
-    public bool IsCollapsed()
+    // Sets the tile and keeps track of the instantiated tile
+    public void SetTile(GameObject tile)
     {
-        return possibleTiles.Count == 1;
+        instantiatedTile = tile;
+        tileSet = true;
+        // Remove the chosen tile from the list of not chosen tiles
+        notChosenTiles.Remove(tile);
     }
 
-    public void Collapse()
+    // Checks if the tile is already instantiated
+    public bool IsTileSet()
     {
-        if (possibleTiles.Count > 1)
-        {
-            // Choose a random tile from the possibilities
-            GameObject chosenTile = possibleTiles[Random.Range(0, possibleTiles.Count)];
-            possibleTiles = new List<GameObject> { chosenTile };
-        }
-    }
-
-    public GameObject GetCollapsedTile()
-    {
-        return IsCollapsed() ? possibleTiles[0] : null;
-    }
-
-    // Eliminate tiles that are not allowed based on neighboring constraints
-    public void ConstrainPossibleTiles(System.Predicate<GameObject> constraint)
-    {
-        possibleTiles.RemoveAll(tile => !constraint(tile));
+        return instantiatedTile != null;
     }
 }
